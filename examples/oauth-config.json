@@ -1,0 +1,24 @@
+
+{
+  "mcpServers": {
+    "mcp-jira-rest": {
+      "command": "node",
+      "args": ["/path/to/mcp-jira-rest/dist/index.js"],
+      "env": {
+        "JIRA_BASE_URL": "https://your-domain.atlassian.net",
+        "JIRA_OAUTH_ACCESS_TOKEN": "your-oauth-access-token",
+        "REQUEST_TIMEOUT": "30000",
+        "MAX_RETRIES": "3",
+        "RETRY_DELAY": "1000",
+        "MCP_LOG_LEVEL": "info"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "issue.get",
+        "project.get",
+        "user.get",
+        "jql.search"
+      ]
+    }
+  }
+}

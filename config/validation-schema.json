@@ -1,0 +1,68 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MCP Jira REST Server Configuration Schema",
+  "type": "object",
+  "properties": {
+    "JIRA_BASE_URL": {
+      "type": "string",
+      "format": "uri",
+      "description": "Base URL of the Jira instance (e.g., https://your-domain.atlassian.net)",
+      "pattern": "^https?://[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(/.*)?$"
+    },
+    "JIRA_EMAIL": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address for Jira authentication"
+    },
+    "JIRA_API_TOKEN": {
+      "type": "string",
+      "minLength": 1,
+      "description": "API token for Jira authentication"
+    },
+    "JIRA_OAUTH_ACCESS_TOKEN": {
+      "type": "string",
+      "minLength": 1,
+      "description": "OAuth access token for Jira authentication"
+    },
+    "REQUEST_TIMEOUT": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Request timeout in milliseconds (default: 30000)"
+    },
+    "MAX_RETRIES": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Maximum number of retry attempts (default: 3)"
+    },
+    "RETRY_DELAY": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Delay between retry attempts in milliseconds (default: 1000)"
+    },
+    "MCP_SERVER_NAME": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 250,
+      "description": "Name of the MCP server (default: jira-rest)"
+    },
+    "MCP_SERVER_VERSION": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9.-]+)?$",
+      "description": "Version of the MCP server (default: 1.0.0)"
+    }
+  },
+  "required": ["JIRA_BASE_URL"],
+  "anyOf": [
+    {
+      "allOf": [
+        {"required": ["JIRA_EMAIL"]},
+        {"required": ["JIRA_API_TOKEN"]}
+      ]
+    },
+    {
+      "required": ["JIRA_OAUTH_ACCESS_TOKEN"]
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "field_value",
+    "field": "project.key",
+    "value": "SCRUM",
+    "operator": "equals"
+  },
+  {
+    "type": "field_value",
+    "field": "status.name",
+    "value": "To Do",
+    "operator": "equals"
+  }
+]

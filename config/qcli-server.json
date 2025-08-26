@@ -1,0 +1,185 @@
+
+{
+  "name": "mcp-jira-rest",
+  "version": "1.0.0",
+  "description": "Enhanced MCP Jira server using official REST API endpoints with full Q CLI compatibility",
+  "author": "Enhanced MCP Jira Team",
+  "license": "MIT",
+  "homepage": "https://github.com/enhanced-mcp/jira-rest",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enhanced-mcp/jira-rest.git"
+  },
+  "keywords": ["mcp", "jira", "rest-api", "typescript", "q-cli", "amazon-q"],
+  "capabilities": {
+    "tools": {
+      "listChanged": true,
+      "callTool": true
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "logging": {
+      "level": "info"
+    }
+  },
+  "transport": {
+    "type": "stdio",
+    "timeout": 30000
+  },
+  "health": {
+    "endpoint": "/health",
+    "timeout": 5000
+  },
+  "metadata": {
+    "mcpVersion": "2024-11-05",
+    "protocolVersion": "0.5.0",
+    "serverVersion": "1.0.0",
+    "buildDate": "2025-08-15",
+    "nodeVersion": ">=18.0.0"
+  },
+  "configuration": {
+    "required": [
+      "JIRA_BASE_URL"
+    ],
+    "optional": [
+      "JIRA_EMAIL",
+      "JIRA_API_TOKEN",
+      "JIRA_OAUTH_ACCESS_TOKEN",
+      "REQUEST_TIMEOUT",
+      "MAX_RETRIES",
+      "RETRY_DELAY",
+      "MCP_SERVER_NAME",
+      "MCP_SERVER_VERSION"
+    ],
+    "validation": {
+      "schema": "config/validation-schema.json"
+    }
+  },
+  "tools": [
+    {
+      "name": "issue.create",
+      "description": "Create a new Jira issue with comprehensive field support",
+      "category": "issue-management",
+      "tags": ["create", "issue", "jira"]
+    },
+    {
+      "name": "issue.get",
+      "description": "Retrieve detailed information about a specific Jira issue",
+      "category": "issue-management",
+      "tags": ["get", "issue", "jira", "details"]
+    },
+    {
+      "name": "issue.update",
+      "description": "Update an existing Jira issue with new field values",
+      "category": "issue-management",
+      "tags": ["update", "issue", "jira"]
+    },
+    {
+      "name": "issue.delete",
+      "description": "Delete a Jira issue and optionally its subtasks",
+      "category": "issue-management",
+      "tags": ["delete", "issue", "jira"]
+    },
+    {
+      "name": "issue.transition",
+      "description": "Transition a Jira issue to a different status",
+      "category": "issue-management",
+      "tags": ["transition", "status", "workflow", "jira"]
+    },
+    {
+      "name": "issue.transitions.list",
+      "description": "Get available transitions for a Jira issue",
+      "category": "issue-management",
+      "tags": ["transitions", "workflow", "jira"]
+    },
+    {
+      "name": "jql.search",
+      "description": "Search for Jira issues using JQL (Jira Query Language)",
+      "category": "search",
+      "tags": ["search", "jql", "query", "jira"]
+    },
+    {
+      "name": "issue.comment.add",
+      "description": "Add a comment to a Jira issue",
+      "category": "comments",
+      "tags": ["comment", "add", "jira"]
+    },
+    {
+      "name": "issue.comments.get",
+      "description": "Retrieve comments from a Jira issue",
+      "category": "comments",
+      "tags": ["comment", "get", "jira"]
+    },
+    {
+      "name": "project.get",
+      "description": "Get detailed information about a Jira project",
+      "category": "project-management",
+      "tags": ["project", "get", "jira"]
+    },
+    {
+      "name": "project.search",
+      "description": "Search for Jira projects with filtering options",
+      "category": "project-management",
+      "tags": ["project", "search", "jira"]
+    },
+    {
+      "name": "user.get",
+      "description": "Get information about a Jira user",
+      "category": "user-management",
+      "tags": ["user", "get", "jira"]
+    },
+    {
+      "name": "user.search",
+      "description": "Search for Jira users",
+      "category": "user-management",
+      "tags": ["user", "search", "jira"]
+    }
+  ],
+  "errorCodes": {
+    "JIRA_AUTH_ERROR": {
+      "code": "JIRA_AUTH_001",
+      "message": "Authentication failed with Jira API",
+      "category": "authentication"
+    },
+    "JIRA_CONNECTION_ERROR": {
+      "code": "JIRA_CONN_001",
+      "message": "Failed to connect to Jira instance",
+      "category": "connection"
+    },
+    "JIRA_VALIDATION_ERROR": {
+      "code": "JIRA_VAL_001",
+      "message": "Request validation failed",
+      "category": "validation"
+    },
+    "JIRA_NOT_FOUND_ERROR": {
+      "code": "JIRA_404_001",
+      "message": "Requested resource not found",
+      "category": "not_found"
+    },
+    "JIRA_PERMISSION_ERROR": {
+      "code": "JIRA_PERM_001",
+      "message": "Insufficient permissions for requested operation",
+      "category": "permission"
+    },
+    "JIRA_RATE_LIMIT_ERROR": {
+      "code": "JIRA_RATE_001",
+      "message": "Rate limit exceeded",
+      "category": "rate_limit"
+    },
+    "TOOL_EXECUTION_ERROR": {
+      "code": "TOOL_EXEC_001",
+      "message": "Tool execution failed",
+      "category": "execution"
+    },
+    "CONFIG_VALIDATION_ERROR": {
+      "code": "CONFIG_VAL_001",
+      "message": "Configuration validation failed",
+      "category": "configuration"
+    }
+  }
+}

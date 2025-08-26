@@ -1,0 +1,22 @@
+
+{
+  "mcpServers": {
+    "mcp-jira-rest": {
+      "command": "node",
+      "args": ["/path/to/mcp-jira-rest/dist/index.js"],
+      "env": {
+        "JIRA_BASE_URL": "https://your-domain.atlassian.net",
+        "JIRA_EMAIL": "your-email@example.com",
+        "JIRA_API_TOKEN": "your-api-token",
+        "MCP_LOG_LEVEL": "debug",
+        "MCP_LOG_FILE": "/tmp/mcp-jira-debug.log",
+        "REQUEST_TIMEOUT": "60000",
+        "MAX_RETRIES": "5",
+        "RETRY_DELAY": "2000"
+      },
+      "disabled": false,
+      "autoApprove": [],
+      "timeout": 120
+    }
+  }
+}
