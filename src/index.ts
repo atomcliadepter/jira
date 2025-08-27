@@ -192,6 +192,17 @@ const TOOLS = [
   validateFieldValueTool,
   calculateFieldValueTool,
   
+  // Automation engine tools
+  createAutomationRuleTool,
+  updateAutomationRuleTool,
+  deleteAutomationRuleTool,
+  getAutomationRuleTool,
+  listAutomationRulesTool,
+  executeAutomationRuleTool,
+  getAutomationExecutionsTool,
+  validateAutomationRuleTool,
+  getAutomationMetricsTool,
+  
   // Field configuration tools
   getFieldConfigurationsTool,
   createFieldConfigurationTool,
@@ -255,6 +266,17 @@ const TOOL_EXECUTORS = {
   'customfield.cascading.set': executeSetCascadingOptions,
   'customfield.validate': executeValidateFieldValue,
   'customfield.calculate': executeCalculateFieldValue,
+  
+  // Automation engine executors
+  'automation.rule.create': executeCreateAutomationRule,
+  'automation.rule.update': executeUpdateAutomationRule,
+  'automation.rule.delete': executeDeleteAutomationRule,
+  'automation.rule.get': executeGetAutomationRule,
+  'automation.rules.list': executeListAutomationRules,
+  'automation.rule.execute': executeExecuteAutomationRule,
+  'automation.executions.get': executeGetAutomationExecutions,
+  'automation.rule.validate': executeValidateAutomationRule,
+  'automation.metrics.get': executeGetAutomationMetrics,
   
   // Field configuration executors
   'fieldconfig.list': executeGetFieldConfigurations,
@@ -356,6 +378,9 @@ class JiraRestMcpServer {
     this.confluenceService = new ConfluenceService(this.confluenceClient);
     confluenceService = this.confluenceService; // Assign to global variable for tool executors
     this.confluenceAutomation = new ConfluenceAutomation(this.confluenceService, this.jiraClient);
+    
+    // Initialize automation engine
+    initializeAutomationEngine(this.jiraClient);
     
     this.healthChecker = new HealthChecker(this.jiraClient);
 

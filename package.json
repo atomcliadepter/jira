@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "postbuild": "node -e \"const fs = require('fs'); const path = require('path'); const cliDir = path.join(__dirname, 'dist', 'cli'); if (fs.existsSync(cliDir)) { fs.readdirSync(cliDir).filter(f => f.endsWith('.js')).forEach(file => { const filePath = path.join(cliDir, file); const content = fs.readFileSync(filePath, 'utf8'); if (!content.startsWith('#!/usr/bin/env node')) { fs.writeFileSync(filePath, '#!/usr/bin/env node\\n' + content); } try { fs.chmodSync(filePath, '755'); } catch(e) { console.log('Could not set executable permissions on', file); } }); }\"",
     "dev": "ts-node --esm src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",

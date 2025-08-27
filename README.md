@@ -7,7 +7,7 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 
 ### Core Functionality
 - **Direct REST API Integration**: Uses official Jira Cloud REST API v3 and Confluence REST API
-- **65+ Professional Tools**: Complete enterprise solution for Jira and Confluence management
+- **58 Professional Tools**: Complete enterprise solution for Jira and Confluence management
 - **TypeScript & Zod Validation**: Full type safety with runtime validation
 - **Modern MCP Patterns**: Built with latest MCP SDK patterns and best practices
 - **Advanced Analytics Engine**: Comprehensive reporting and dashboard capabilities
@@ -446,7 +446,7 @@ If you're migrating from the original MCP Jira SDK that used jira.js:
 
 ### Key Differences
 1. **Direct REST API**: No more jira.js dependency
-2. **Comprehensive Tool Set**: 65+ tools instead of basic functionality
+2. **Comprehensive Tool Set**: 58 tools instead of basic functionality
 3. **Modern Architecture**: Advanced automation, analytics, and reporting capabilities
 4. **Enhanced Performance**: Optimized HTTP client with better retry logic
 5. **Enterprise Features**: Custom fields, field configurations, and Confluence integration
