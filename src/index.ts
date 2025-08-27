@@ -18,6 +18,9 @@ import { logger, generateRequestId } from './utils/logger.js';
 import { configValidator } from './utils/configValidator.js';
 import { HealthChecker } from './utils/healthCheck.js';
 import { createError, mapJiraApiError, McpJiraError } from './utils/errorCodes.js';
+import { metricsCollector } from './monitoring/MetricsCollector.js';
+import { errorHandler } from './errors/ErrorHandler.js';
+import { cacheManager } from './cache/CacheManager.js';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -384,8 +387,82 @@ class JiraRestMcpServer {
     
     this.healthChecker = new HealthChecker(this.jiraClient);
 
+    // Initialize advanced features
+    this.initializeAdvancedFeatures();
+
     this.setupHandlers();
     logger.info('MCP Jira REST Server initialized successfully');
+  }
+
+  private initializeAdvancedFeatures(): void {
+    // Setup metrics collection
+    metricsCollector.addHealthCheck('jira_connection', async () => {
+      try {
+        await this.jiraClient.get('/rest/api/3/myself');
+        return { status: 'pass', message: 'JIRA connection healthy' };
+      } catch (error: any) {
+        return { status: 'fail', message: `JIRA connection failed: ${error?.message || 'Unknown error'}` };
+      }
+    });
+
+    metricsCollector.addHealthCheck('confluence_connection', async () => {
+      try {
+        await this.confluenceClient.get('/rest/api/user/current');
+        return { status: 'pass', message: 'Confluence connection healthy' };
+      } catch (error: any) {
+        return { status: 'fail', message: `Confluence connection failed: ${error?.message || 'Unknown error'}` };
+      }
+    });
+
+    // Setup error handling for JIRA operations
+    errorHandler.addRecoveryStrategy({
+      name: 'jira_reconnect',
+      condition: (error) => error.category === 'network' && error.context.operation?.includes('jira'),
+      action: async (error) => {
+        try {
+          // Attempt to reconnect to JIRA
+          await this.jiraClient.get('/rest/api/3/myself');
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      maxRetries: 3,
+      backoffMs: 5000
+    });
+
+    // Setup cache warming for common operations
+    this.warmCommonCaches();
+
+    logger.info('Advanced features initialized successfully');
+  }
+
+  private async warmCommonCaches(): Promise<void> {
+    try {
+      // Warm cache with user info
+      await cacheManager.getOrSet(
+        'current_user',
+        async () => {
+          const response = await this.jiraClient.get('/rest/api/3/myself');
+          return response.data;
+        },
+        { ttl: 5 * 60 * 1000, tags: ['user'] } // 5 minutes
+      );
+
+      // Warm cache with server info
+      await cacheManager.getOrSet(
+        'server_info',
+        async () => {
+          const response = await this.jiraClient.get('/rest/api/3/serverInfo');
+          return response.data;
+        },
+        { ttl: 60 * 60 * 1000, tags: ['server'] } // 1 hour
+      );
+
+      logger.debug('Common caches warmed successfully');
+    } catch (error) {
+      logger.warn('Failed to warm common caches', error);
+    }
   }
 
   private loadServerMetadata(): void {
@@ -440,6 +517,13 @@ class JiraRestMcpServer {
       
       logger.info('Tool execution started', { tool: name, requestId });
 
+      // Check circuit breaker
+      if (!errorHandler.shouldAllowOperation(name)) {
+        const error = createError('TOOL_EXECUTION_ERROR', { tool: name, reason: 'Circuit breaker open' }, requestId);
+        logger.warn('Tool execution blocked by circuit breaker', { tool: name, requestId });
+        throw error;
+      }
+
       const executor = TOOL_EXECUTORS[name as keyof typeof TOOL_EXECUTORS];
       if (!executor) {
         const error = createError('TOOL_NOT_FOUND_ERROR', { tool: name }, requestId);
@@ -448,42 +532,49 @@ class JiraRestMcpServer {
       }
 
       try {
-        const startTime = Date.now();
-        const result = await executor(this.jiraClient, args);
-        const duration = Date.now() - startTime;
-        
-        logger.info('Tool execution completed', { 
+        // Execute tool with monitoring
+        const result = await metricsCollector.timeOperation(
+          `tool_execution_${name}`,
+          async () => {
+            return await executor(this.jiraClient, args);
+          },
+          { tool: name, requestId }
+        );
+
+        // Record successful execution
+        errorHandler.recordSuccess(name);
+        metricsCollector.recordToolExecution(name, 0, true); // Duration recorded by timeOperation
+
+        logger.info('Tool execution completed successfully', { 
           tool: name, 
-          duration, 
-          success: !result.isError,
-          requestId 
+          requestId,
+          resultType: typeof result
         });
 
         return result;
       } catch (error: any) {
-        const duration = Date.now() - Date.now();
-        logger.error('Tool execution failed', error, requestId);
+        // Handle and record error
+        const errorResult = await errorHandler.handleError(error, {
+          operation: name,
+          toolName: name,
+          requestId,
+          timestamp: Date.now(),
+          metadata: { args }
+        });
 
-        // Map Jira API errors to structured errors
-        const structuredError = error instanceof McpJiraError 
-          ? error 
-          : mapJiraApiError(error, requestId);
+        metricsCollector.recordToolExecution(name, 0, false, error.constructor.name);
 
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Error executing ${name}: ${structuredError.message}`,
-            },
-          ],
-          isError: true,
-          _meta: {
-            error: structuredError.toJSON(),
-            requestId,
-            tool: name,
-            duration
-          }
-        };
+        // Map and enhance error
+        const mappedError = mapJiraApiError(error, requestId);
+        logger.error('Tool execution failed', {
+          tool: name,
+          error: mappedError,
+          recovered: errorResult.recovered,
+          recoveryAction: errorResult.action,
+          requestId
+        });
+
+        throw mappedError;
       }
     });
 

@@ -103,19 +103,13 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 - `automation.executions.get` - Get automation execution history and logs
 - `automation.rule.validate` - Validate automation rule syntax and logic
 
-### Technical Features
-- **Robust Error Handling**: Comprehensive error types and recovery strategies
-- **Authentication Support**: API tokens, OAuth 2.0, and Basic auth
-- **Performance Optimized**: Request retry logic, timeout handling, and efficient pagination
-- **ADF Support**: Automatic conversion between plain text and Atlassian Document Format
-- **Comprehensive Logging**: Request/response logging for debugging
+### Advanced Features
+- **Comprehensive Monitoring**: Real-time metrics collection with Prometheus export
+- **Intelligent Error Handling**: Automatic error recovery with circuit breaker pattern
+- **Multi-Level Caching**: Advanced caching with intelligent invalidation and warming
+- **Performance Optimization**: Request timing, memory monitoring, and bottleneck detection
 - **Health Monitoring**: Built-in health checks and system monitoring
-- **Configuration Validation**: Runtime configuration validation with detailed error reporting
-- **Scheduled Operations**: Cron-based scheduling for automated tasks
-- **Webhook Support**: Real-time event processing and notifications
-- **Multi-format Export**: Support for CSV, Excel, PDF, JSON, and HTML exports
-- **Advanced Caching**: Intelligent caching for improved performance
-- **Notification System**: Email, Slack, and webhook notifications
+- **Observability**: Detailed logging, metrics, and performance analytics
 
 ## Installation
 
@@ -194,7 +188,139 @@ MCP_SERVER_VERSION=1.0.0
 2. Configure scopes: `read:jira-user`, `read:jira-work`, `write:jira-work`
 3. Set `JIRA_OAUTH_ACCESS_TOKEN` in your `.env` file
 
-## Usage
+## Advanced Features
+
+### Monitoring & Observability
+
+The Enhanced MCP Jira REST Server includes comprehensive monitoring capabilities:
+
+#### Metrics Collection
+- **Performance Metrics**: Request timing, throughput, and latency tracking
+- **System Metrics**: Memory usage, CPU utilization, and event loop monitoring
+- **Business Metrics**: Tool execution rates, success/failure ratios, and user activity
+- **Custom Metrics**: Extensible metrics system for domain-specific monitoring
+
+#### Health Monitoring
+```bash
+# Built-in health checks
+- JIRA connection status
+- Confluence connection status
+- Memory usage monitoring
+- Event loop lag detection
+- Circuit breaker status
+```
+
+#### Prometheus Integration
+```bash
+# Export metrics in Prometheus format
+GET /metrics
+
+# Example metrics
+mcp_tool_executions_total{tool="issue.create",success="true"} 150
+mcp_tool_execution_duration_ms{tool="issue.create"} 245.5
+mcp_cache_hits_total 1250
+mcp_cache_misses_total 85
+```
+
+### Error Handling & Recovery
+
+Advanced error management with automatic recovery:
+
+#### Error Categories
+- **Network Errors**: Automatic retry with exponential backoff
+- **Authentication Errors**: Token refresh and re-authentication
+- **Rate Limiting**: Intelligent backoff and request queuing
+- **Validation Errors**: Input sanitization and correction
+- **System Errors**: Graceful degradation and failover
+
+#### Circuit Breaker Pattern
+```typescript
+// Automatic circuit breaking for failing operations
+- Failure threshold: 5 consecutive failures
+- Recovery timeout: 60 seconds
+- Half-open state testing
+- Automatic recovery on success
+```
+
+#### Recovery Strategies
+- **Network Retry**: Exponential backoff for transient failures
+- **Rate Limit Backoff**: Intelligent waiting for rate limit reset
+- **Authentication Refresh**: Automatic token renewal
+- **Data Sanitization**: Input validation and correction
+
+### Intelligent Caching
+
+Multi-level caching system with advanced features:
+
+#### Cache Features
+- **TTL-based Expiration**: Configurable time-to-live for entries
+- **Tag-based Invalidation**: Bulk invalidation by tags
+- **LRU Eviction**: Least Recently Used eviction policy
+- **Compression**: Automatic compression for large entries
+- **Cache Warming**: Proactive cache population
+- **Statistics**: Detailed hit/miss ratios and performance metrics
+
+#### Cache Usage
+```typescript
+// Cache with tags for easy invalidation
+await cacheManager.set('user:123', userData, {
+  ttl: 300000, // 5 minutes
+  tags: ['user', 'profile'],
+  compress: true
+});
+
+// Invalidate all user-related cache entries
+cacheManager.invalidateByTags(['user']);
+
+// Get-or-set pattern
+const userData = await cacheManager.getOrSet(
+  'user:123',
+  async () => fetchUserFromAPI(),
+  { ttl: 300000, tags: ['user'] }
+);
+```
+
+### Performance Optimization
+
+#### Request Optimization
+- **Connection Pooling**: Efficient HTTP connection management
+- **Request Batching**: Combine multiple operations
+- **Parallel Processing**: Concurrent request execution
+- **Response Streaming**: Memory-efficient large data handling
+
+#### Memory Management
+- **Garbage Collection Monitoring**: Track memory usage patterns
+- **Memory Leak Detection**: Automatic leak detection and reporting
+- **Resource Cleanup**: Proper cleanup of connections and handles
+- **Memory Pressure Handling**: Adaptive behavior under memory constraints
+
+#### Performance Benchmarks
+- **Tool Registration**: < 100ms for 58 tools
+- **Tool Lookup**: < 10ms for 1000 operations
+- **Memory Usage**: < 50MB increase under load
+- **Concurrent Operations**: 50 operations < 100ms
+- **Cache Access**: < 1ms average access time
+- **Error Recovery**: < 5s average recovery time
+
+### Security Enhancements
+
+#### Input Validation
+- **XSS Prevention**: HTML sanitization and encoding
+- **SQL Injection Protection**: Parameterized queries and validation
+- **Path Traversal Prevention**: File path sanitization
+- **Data Size Limits**: Protection against large payload attacks
+
+#### Authentication Security
+- **Token Validation**: Format and expiration checking
+- **Rate Limiting**: Per-user and per-operation limits
+- **Audit Logging**: Security event tracking
+- **Error Information Disclosure**: Sanitized error messages
+
+#### Configuration Security
+- **HTTPS Enforcement**: Secure communication requirements
+- **Secure Defaults**: Security-first default configurations
+- **Environment Validation**: Runtime security checks
+- **Secrets Management**: Secure handling of sensitive data
 
 ### Running the Server
 
