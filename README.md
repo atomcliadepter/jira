@@ -472,26 +472,128 @@ If you're migrating from the original MCP Jira SDK that used jira.js:
 - API token authentication remains the same
 - OAuth configuration simplified
 
-## Development
+## Development & Testing
 
 ### Building
 ```bash
 npm run build
 ```
 
-### Testing
+### Comprehensive Testing Suite
+
+The Enhanced MCP Jira REST Server includes a comprehensive test suite with multiple testing strategies:
+
+#### Test Categories
+
+**Unit Tests**
 ```bash
-npm test
+npm run test:unit
+```
+- Individual component testing
+- Mock-based isolation
+- Fast execution
+- High coverage requirements
+
+**Integration Tests**  
+```bash
+npm run test:integration
+```
+- Component interaction testing
+- Real API simulation
+- End-to-end workflows
+- Error handling validation
+
+**End-to-End Tests**
+```bash
+npm run test:e2e-new
+```
+- Complete system testing
+- MCP protocol validation
+- Tool registration verification
+- Performance benchmarking
+
+**Security Tests**
+```bash
+npm run test:security
+```
+- Input validation testing
+- Authentication security
+- XSS/injection prevention
+- Data sanitization
+
+**Performance Tests**
+```bash
+npm run test:performance
+```
+- Load testing
+- Memory usage validation
+- Concurrent operation testing
+- Resource cleanup verification
+
+**Automation Tests**
+```bash
+npm run test:automation
+```
+- Automation tool validation
+- Rule execution testing
+- Trigger/action verification
+- Metrics collection testing
+
+**CLI Tests**
+```bash
+npm run test:cli
+```
+- CLI executable validation
+- Command-line interface testing
+- Help/version verification
+- Error handling testing
+
+#### Running Tests
+
+**All Tests with Coverage**
+```bash
+npm run test:all
+npm run test:coverage
 ```
 
-### Linting
+**Continuous Integration**
 ```bash
-npm run lint
+npm run test:ci
 ```
 
-### Type Checking
+**Watch Mode (Development)**
 ```bash
-npx tsc --noEmit
+npm run test:watch
+```
+
+**Debug Mode**
+```bash
+npm run test:debug
+```
+
+#### Test Results
+
+Test results are generated in multiple formats:
+- **Console Output**: Real-time test execution
+- **JUnit XML**: `test-results/junit.xml` (CI integration)
+- **HTML Report**: `test-results/test-report.html` (detailed view)
+- **Coverage Report**: `coverage/` directory (lcov, html)
+- **JSON Summary**: `test-results/test-summary.json`
+
+#### Coverage Requirements
+
+- **Lines**: 80% minimum
+- **Functions**: 80% minimum  
+- **Branches**: 80% minimum
+- **Statements**: 80% minimum
+
+### Linting & Type Checking
+
+```bash
+npm run lint:check      # Check for linting issues
+npm run lint            # Fix linting issues automatically
+npm run type-check      # TypeScript type checking
+npm run validate        # Run all validation (lint + type + test)
 ```
 
 ## Contributing
