@@ -1,0 +1,186 @@
+{
+  "projects": [
+    {
+      "key": "SCRUM",
+      "name": "my first project",
+      "projectTypeKey": "software",
+      "description": "Sample Scrum project for testing"
+    },
+    {
+      "key": "PA",
+      "name": "Product Alpha",
+      "projectTypeKey": "software",
+      "description": "Product Alpha development project"
+    }
+  ],
+  "issueTypes": [
+    {
+      "id": "10001",
+      "name": "Task",
+      "description": "Tasks track small, distinct pieces of work.",
+      "subtask": false
+    },
+    {
+      "id": "10002",
+      "name": "Bug",
+      "description": "Bugs track problems or errors.",
+      "subtask": false
+    },
+    {
+      "id": "10003",
+      "name": "Story",
+      "description": "Stories track functionality or features expressed as user goals.",
+      "subtask": false
+    },
+    {
+      "id": "10004",
+      "name": "Epic",
+      "description": "Epics track collections of related bugs, stories, and tasks.",
+      "subtask": false
+    }
+  ],
+  "priorities": [
+    {
+      "id": "1",
+      "name": "Highest",
+      "description": "This problem will block progress."
+    },
+    {
+      "id": "2",
+      "name": "High",
+      "description": "Serious problem that could block progress."
+    },
+    {
+      "id": "3",
+      "name": "Medium",
+      "description": "Has the potential to affect progress."
+    },
+    {
+      "id": "4",
+      "name": "Low",
+      "description": "Minor problem or easily worked around."
+    },
+    {
+      "id": "5",
+      "name": "Lowest",
+      "description": "Trivial problem with little or no impact on progress."
+    }
+  ],
+  "statuses": [
+    {
+      "id": "10000",
+      "name": "To Do",
+      "description": "The issue is open and ready for the assignee to start work on it."
+    },
+    {
+      "id": "10001",
+      "name": "In Progress",
+      "description": "This issue is being actively worked on at the moment by the assignee."
+    },
+    {
+      "id": "10002",
+      "name": "Done",
+      "description": "Work has finished on the issue."
+    }
+  ],
+  "sampleIssues": [
+    {
+      "key": "SCRUM-1",
+      "summary": "Sample Task Issue",
+      "description": "This is a sample task issue for testing purposes",
+      "issueType": "Task",
+      "priority": "Medium",
+      "status": "To Do"
+    },
+    {
+      "key": "SCRUM-2",
+      "summary": "Sample Bug Issue",
+      "description": "This is a sample bug issue for testing purposes",
+      "issueType": "Bug",
+      "priority": "High",
+      "status": "In Progress"
+    }
+  ],
+  "sampleJqlQueries": [
+    {
+      "name": "All open issues",
+      "jql": "status != Done ORDER BY created DESC"
+    },
+    {
+      "name": "High priority issues",
+      "jql": "priority = High ORDER BY created DESC"
+    },
+    {
+      "name": "Recent issues",
+      "jql": "created >= -7d ORDER BY created DESC"
+    },
+    {
+      "name": "Unassigned issues",
+      "jql": "assignee is EMPTY ORDER BY created DESC"
+    },
+    {
+      "name": "Issues by project",
+      "jql": "project = SCRUM ORDER BY created DESC"
+    }
+  ],
+  "mcpToolTests": [
+    {
+      "toolName": "jql.search",
+      "description": "Search for issues using JQL",
+      "arguments": {
+        "jql": "ORDER BY created DESC",
+        "maxResults": 5,
+        "fields": ["summary", "status", "assignee"]
+      }
+    },
+    {
+      "toolName": "project.get",
+      "description": "Get project details",
+      "arguments": {
+        "projectIdOrKey": "SCRUM"
+      }
+    },
+    {
+      "toolName": "issue.get",
+      "description": "Get issue details",
+      "arguments": {
+        "issueIdOrKey": "PA-1",
+        "fields": ["summary", "description", "status", "assignee"]
+      }
+    },
+    {
+      "toolName": "user.search",
+      "description": "Search for users",
+      "arguments": {
+        "query": "sumit",
+        "maxResults": 5
+      }
+    }
+  ],
+  "errorTestCases": [
+    {
+      "name": "Invalid project key",
+      "toolName": "project.get",
+      "arguments": {
+        "projectIdOrKey": "NONEXISTENT"
+      },
+      "expectedError": "Project not found"
+    },
+    {
+      "name": "Invalid issue key",
+      "toolName": "issue.get",
+      "arguments": {
+        "issueIdOrKey": "INVALID-999"
+      },
+      "expectedError": "Issue not found"
+    },
+    {
+      "name": "Invalid JQL syntax",
+      "toolName": "jql.search",
+      "arguments": {
+        "jql": "invalid jql syntax here"
+      },
+      "expectedError": "JQL syntax error"
+    }
+  ]
+}
