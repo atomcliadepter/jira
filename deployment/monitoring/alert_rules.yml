@@ -1,0 +1,157 @@
+# Enhanced MCP Jira REST Server - Alert Rules
+groups:
+  - name: mcp-jira-server.rules
+    rules:
+      # High-level service availability
+      - alert: MCPJiraServerDown
+        expr: up{job="mcp-jira-server"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: mcp-jira-server
+        annotations:
+          summary: "MCP Jira Server is down"
+          description: "MCP Jira Server has been down for more than 1 minute."
+
+      # High error rate
+      - alert: MCPJiraHighErrorRate
+        expr: rate(mcp_tool_executions_total{success="false"}[5m]) / rate(mcp_tool_executions_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: mcp-jira-server
+        annotations:
+          summary: "High error rate in MCP Jira Server"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes."
+
+      # High response time
+      - alert: MCPJiraHighResponseTime
+        expr: histogram_quantile(0.95, rate(mcp_tool_execution_duration_ms_bucket[5m])) > 5000
+        for: 3m
+        labels:
+          severity: warning
+          service: mcp-jira-server
+        annotations:
+          summary: "High response time in MCP Jira Server"
+          description: "95th percentile response time is {{ $value }}ms for the last 5 minutes."
+
+      # Memory usage
+      - alert: MCPJiraHighMemoryUsage
+        expr: memory_heap_used_bytes / memory_heap_total_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: mcp-jira-server
+        annotations:
+          summary: "High memory usage in MCP Jira Server"
+          description: "Memory usage is {{ $value | humanizePercentage }} for the last 5 minutes."
+
+      # Circuit breaker open
+      - alert: MCPJiraCircuitBreakerOpen
+        expr: increase(mcp_circuit_breaker_state_changes_total{state="open"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          service: mcp-jira-server
+        annotations:
+          summary: "Circuit breaker opened in MCP Jira Server"
+          description: "Circuit breaker for {{ $labels.operation }} has opened."
+
+      # Cache hit rate low
+      - alert: MCPJiraLowCacheHitRate
+        expr: mcp_cache_hit_rate < 0.5
+        for: 10m
+        labels:
+          severity: info
+          service: mcp-jira-server
+        annotations:
+          summary: "Low cache hit rate in MCP Jira Server"
+          description: "Cache hit rate is {{ $value | humanizePercentage }} for the last 10 minutes."
+
+      # JIRA connection issues
+      - alert: MCPJiraConnectionIssues
+        expr: increase(errors_total{category="network",operation=~".*jira.*"}[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: mcp-jira-server
+        annotations:
+          summary: "JIRA connection issues detected"
+          description: "{{ $value }} JIRA connection errors in the last 5 minutes."
+
+      # Tool execution failures
+      - alert: MCPJiraToolExecutionFailures
+        expr: increase(mcp_tool_executions_total{success="false"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: mcp-jira-server
+        annotations:
+          summary: "High number of tool execution failures"
+          description: "{{ $value }} tool execution failures in the last 5 minutes."
+
+      # Rate limiting triggered
+      - alert: MCPJiraRateLimitTriggered
+        expr: increase(errors_total{category="rate_limit"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: info
+          service: mcp-jira-server
+        annotations:
+          summary: "Rate limiting triggered"
+          description: "Rate limiting has been triggered {{ $value }} times in the last 5 minutes."
+
+  - name: system.rules
+    rules:
+      # System-level alerts
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% for more than 5 minutes."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 90% for more than 5 minutes."
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is below 10% on {{ $labels.mountpoint }}."
+
+  - name: performance.rules
+    rules:
+      # Performance-related recording rules
+      - record: mcp:tool_execution_rate
+        expr: rate(mcp_tool_executions_total[5m])
+
+      - record: mcp:tool_success_rate
+        expr: rate(mcp_tool_executions_total{success="true"}[5m]) / rate(mcp_tool_executions_total[5m])
+
+      - record: mcp:tool_p95_duration
+        expr: histogram_quantile(0.95, rate(mcp_tool_execution_duration_ms_bucket[5m]))
+
+      - record: mcp:tool_p99_duration
+        expr: histogram_quantile(0.99, rate(mcp_tool_execution_duration_ms_bucket[5m]))
+
+      - record: mcp:error_rate_by_category
+        expr: rate(errors_total[5m]) by (category)
+
+      - record: mcp:cache_performance
+        expr: |
+          (
+            rate(mcp_cache_hits_total[5m]) /
+            (rate(mcp_cache_hits_total[5m]) + rate(mcp_cache_misses_total[5m]))
+          )

@@ -1,0 +1,277 @@
+# Enhanced MCP Jira REST Server - Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-jira-server
+  namespace: mcp-system
+  labels:
+    app: mcp-jira-server
+    version: v1.0.0
+    component: api-server
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: mcp-jira-server
+  template:
+    metadata:
+      labels:
+        app: mcp-jira-server
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: mcp-jira-server
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      
+      containers:
+      - name: mcp-jira-server
+        image: mcp-jira-server:1.0.0
+        imagePullPolicy: IfNotPresent
+        
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: MCP_SERVER_NAME
+          value: "mcp-jira-rest-k8s"
+        - name: JIRA_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: jira-credentials
+              key: base-url
+        - name: JIRA_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: jira-credentials
+              key: email
+        - name: JIRA_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: jira-credentials
+              key: api-token
+        - name: CONFLUENCE_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: confluence-credentials
+              key: base-url
+              optional: true
+        - name: CONFLUENCE_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: confluence-credentials
+              key: email
+              optional: true
+        - name: CONFLUENCE_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: confluence-credentials
+              key: api-token
+              optional: true
+        
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 10
+        
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+        - name: cache
+          mountPath: /app/cache
+        - name: logs
+          mountPath: /app/logs
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      
+      volumes:
+      - name: config
+        configMap:
+          name: mcp-jira-config
+      - name: cache
+        emptyDir:
+          sizeLimit: 1Gi
+      - name: logs
+        emptyDir:
+          sizeLimit: 1Gi
+      
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - mcp-jira-server
+              topologyKey: kubernetes.io/hostname
+      
+      tolerations:
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 300
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 300
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-jira-server
+  namespace: mcp-system
+  labels:
+    app: mcp-jira-server
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9090"
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app: mcp-jira-server
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mcp-jira-server
+  namespace: mcp-system
+  labels:
+    app: mcp-jira-server
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcp-jira-config
+  namespace: mcp-system
+  labels:
+    app: mcp-jira-server
+data:
+  server.json: |
+    {
+      "name": "mcp-jira-rest-k8s",
+      "version": "1.0.0",
+      "description": "Enhanced MCP Jira REST Server with advanced monitoring and caching",
+      "performance": {
+        "requestTimeout": 30000,
+        "maxRetries": 3,
+        "retryDelay": 1000
+      },
+      "monitoring": {
+        "enabled": true,
+        "healthCheckInterval": 30000,
+        "metricsPort": 9090
+      },
+      "cache": {
+        "maxSize": 104857600,
+        "defaultTtl": 300000,
+        "maxEntries": 10000
+      },
+      "security": {
+        "rateLimitWindow": 60000,
+        "rateLimitMax": 100,
+        "enableCors": false,
+        "trustProxy": true
+      }
+    }
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-jira-server
+  namespace: mcp-system
+  labels:
+    app: mcp-jira-server
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  tls:
+  - hosts:
+    - mcp-jira.example.com
+    secretName: mcp-jira-tls
+  rules:
+  - host: mcp-jira.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mcp-jira-server
+            port:
+              number: 80
