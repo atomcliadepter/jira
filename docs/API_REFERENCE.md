@@ -2,6 +2,27 @@
 
 This document provides a comprehensive reference for all 65+ tools available in the Enhanced MCP Jira REST Server.
 
+## HTTP Endpoints
+
+The server provides HTTP endpoints for monitoring and health checks on port 9090:
+
+### GET /health
+Returns server health status.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-08-28T16:23:32.159Z",
+  "service": "mcp-jira-server"
+}
+```
+
+### GET /metrics
+Returns Prometheus-formatted metrics for monitoring.
+
+**Response:** Plain text Prometheus metrics format
+
 ## Issue Management Tools
 
 ### issue.create

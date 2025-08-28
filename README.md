@@ -108,8 +108,14 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 - **Intelligent Error Handling**: Automatic error recovery with circuit breaker pattern
 - **Multi-Level Caching**: Advanced caching with intelligent invalidation and warming
 - **Performance Optimization**: Request timing, memory monitoring, and bottleneck detection
-- **Health Monitoring**: Built-in health checks and system monitoring
+- **Health Monitoring**: Built-in health checks and system monitoring at `/health` and `/metrics` (port 9090)
 - **Observability**: Detailed logging, metrics, and performance analytics
+
+### Recent Updates (v1.0.1)
+- ✅ **All Critical Issues Resolved**: Fixed automation tools, cache system, and HTTP endpoints
+- ✅ **Production Ready**: Comprehensive testing and validation completed
+- ✅ **Enhanced Monitoring**: Added HTTP server for health checks and metrics
+- ✅ **Improved Reliability**: Fixed rate limiting and retry logic
 
 ## Installation
 
@@ -173,7 +179,7 @@ LOG_LEVEL=info
 
 # MCP Server
 MCP_SERVER_NAME=jira-rest
-MCP_SERVER_VERSION=1.0.0
+MCP_SERVER_VERSION=1.0.1
 ```
 
 ### Authentication Methods

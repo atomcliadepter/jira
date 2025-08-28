@@ -4,7 +4,11 @@
  */
 
 import { Command } from 'commander';
+import { config } from 'dotenv';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+
+// Load environment variables
+config();
 import { join } from 'path';
 import { ConfluenceService } from '../services/ConfluenceService.js';
 import { ConfluenceRestClient } from '../http/ConfluenceRestClient.js';

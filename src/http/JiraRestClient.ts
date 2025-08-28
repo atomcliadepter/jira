@@ -1,6 +1,7 @@
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { z } from 'zod';
+import { logger } from '../utils/logger.js';
 
 // Configuration schema
 export const JiraConfigSchema = z.object({
@@ -91,7 +92,7 @@ export class JiraRestClient {
     // Request interceptor for logging
     this.client.interceptors.request.use(
       (config) => {
-        console.log(`[JIRA API] ${config.method?.toUpperCase()} ${config.url}`);
+        logger.debug(`[JIRA API] ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
       (error) => Promise.reject(error)
@@ -122,13 +123,20 @@ export class JiraRestClient {
               );
             case 429:
               // Rate limiting - implement retry with backoff
-              if (!originalRequest._retry && originalRequest._retryCount < this.config.maxRetries) {
-                originalRequest._retry = true;
-                originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
+              originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
+              
+              if (originalRequest._retryCount <= this.config.maxRetries) {
+                // Use Retry-After header if available, otherwise exponential backoff
+                const retryAfter = error.response?.headers?.['retry-after'];
+                let delay: number;
                 
-                const delay = this.config.retryDelay * Math.pow(2, originalRequest._retryCount - 1);
+                if (retryAfter) {
+                  delay = parseInt(retryAfter) * 1000; // Convert seconds to milliseconds
+                } else {
+                  delay = this.config.retryDelay * Math.pow(2, originalRequest._retryCount - 1);
+                }
+                
                 await new Promise(resolve => setTimeout(resolve, delay));
-                
                 return this.client(originalRequest);
               }
               break;

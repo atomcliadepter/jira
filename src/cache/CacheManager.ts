@@ -119,15 +119,8 @@ export class CacheManager extends EventEmitter {
       const ttl = options.ttl || this.config.defaultTtl;
       const tags = options.tags || [];
       
-      // Check if we need to compress
+      // Use serialized value directly (compression removed for JSON compatibility)
       let finalValue = serializedValue;
-      let compressed = false;
-      
-      if (size > this.config.compressionThreshold && options.compress !== false) {
-        finalValue = await this.compressValue(serializedValue);
-        compressed = true;
-        this.stats.compressions++;
-      }
       
       const entry: CacheEntry = {
         key,
@@ -147,15 +140,13 @@ export class CacheManager extends EventEmitter {
       this.updateStats();
       
       if (this.config.enableMetrics) {
-        metricsCollector.incrementCounter('cache_sets_total', 1, {
-          compressed: compressed.toString()
-        });
+        metricsCollector.incrementCounter('cache_sets_total', 1);
         
         metricsCollector.setGauge('cache_size_bytes', this.stats.totalSize);
         metricsCollector.setGauge('cache_entries_total', this.stats.totalEntries);
       }
       
-      this.emit('set', { key, size: entry.size, compressed });
+      this.emit('set', { key, size: entry.size });
       return true;
     } catch (error) {
       console.error('Cache set error:', error);
@@ -409,11 +400,6 @@ export class CacheManager extends EventEmitter {
 
   private deserializeValue<T>(value: string): T {
     return JSON.parse(value) as T;
-  }
-
-  private async compressValue(value: string): Promise<string> {
-    // Simple compression simulation (in real implementation, use zlib)
-    return `compressed:${value.length}:${value.substring(0, 100)}...`;
   }
 
   private calculateSize(value: string): number {

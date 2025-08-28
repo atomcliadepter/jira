@@ -4,7 +4,11 @@
  */
 
 import { Command } from 'commander';
+import { config } from 'dotenv';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+
+// Load environment variables
+config();
 import { join } from 'path';
 import { AutomationEngine } from '../automation/AutomationEngine.js';
 import { JiraRestClient } from '../http/JiraRestClient.js';

@@ -522,9 +522,6 @@ program
     }
   });
 
-// Add custom field management commands
-program.addCommand(customFieldCommand);
-
 // Add advanced reporting commands
 const client = createJiraClient();
 program.addCommand(createReportCommand(client));

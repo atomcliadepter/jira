@@ -5,6 +5,29 @@ All notable changes to the Enhanced MCP Jira REST Server will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2024-08-28
+
+### Fixed
+- **CRITICAL: Automation executor signatures** - Fixed signature mismatch that broke all automation tools
+- **CRITICAL: Cache compression bug** - Removed fake compression that caused deserialization errors
+- **CRITICAL: Rate limit retry logic** - Fixed conflicting retry flags and added Retry-After header support
+- **Jest configuration** - Fixed `moduleNameMapping` typo to `moduleNameMapper`
+- **Logger implementation** - Added missing `setLevel()` method and fixed default context
+- **Cache warming** - Fixed return value bug that caused undefined cache entries
+- **Double metrics counting** - Removed duplicate metric recording calls
+- **CLI environment loading** - Added missing `dotenv.config()` and removed duplicate command registration
+- **Docker build context** - Fixed `.dockerignore` to allow required build files
+- **Logging consistency** - Unified logging across HTTP clients
+
+### Added
+- **HTTP server for health and metrics** - Added `/health` and `/metrics` endpoints on port 9090
+- **MIT License file** - Added proper license file matching package.json declaration
+- **Comprehensive gap analysis** - Added detailed documentation of all fixes applied
+
+### Changed
+- **Docker health check** - Updated to use port 9090 instead of 3000
+- **Coverage artifacts** - Added to `.gitignore` to prevent accidental commits
+
 ## [1.0.0] - 2024-08-27
 
 ### Added

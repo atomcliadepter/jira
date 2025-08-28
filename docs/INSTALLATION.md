@@ -105,6 +105,9 @@ CACHE_MAX_SIZE=1000
 HEALTH_CHECK_INTERVAL=60000
 HEALTH_CHECK_TIMEOUT=5000
 
+# HTTP Server Settings (for health and metrics endpoints)
+HTTP_PORT=9090
+
 # Analytics Settings
 ANALYTICS_BATCH_SIZE=100
 ANALYTICS_MAX_HISTORY_DAYS=365
@@ -315,7 +318,7 @@ services:
       - ./reports:/app/reports
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9090/health"]
       interval: 30s
       timeout: 10s
       retries: 3

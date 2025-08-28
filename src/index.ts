@@ -11,6 +11,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { JiraRestClient, JiraConfigSchema } from './http/JiraRestClient.js';
 import { ConfluenceRestClient, ConfluenceConfigSchema } from './http/ConfluenceRestClient.js';
+import { HttpServer } from './http/HttpServer.js';
 import { ConfluenceService } from './services/ConfluenceService.js';
 import { ConfluenceAutomation } from './automation/ConfluenceAutomation.js';
 import { config } from 'dotenv';
@@ -271,15 +272,15 @@ const TOOL_EXECUTORS = {
   'customfield.calculate': executeCalculateFieldValue,
   
   // Automation engine executors
-  'automation.rule.create': executeCreateAutomationRule,
-  'automation.rule.update': executeUpdateAutomationRule,
-  'automation.rule.delete': executeDeleteAutomationRule,
-  'automation.rule.get': executeGetAutomationRule,
-  'automation.rules.list': executeListAutomationRules,
-  'automation.rule.execute': executeExecuteAutomationRule,
-  'automation.executions.get': executeGetAutomationExecutions,
-  'automation.rule.validate': executeValidateAutomationRule,
-  'automation.metrics.get': executeGetAutomationMetrics,
+  'automation.rule.create': (args: unknown) => executeCreateAutomationRule(args),
+  'automation.rule.update': (args: unknown) => executeUpdateAutomationRule(args),
+  'automation.rule.delete': (args: unknown) => executeDeleteAutomationRule(args),
+  'automation.rule.get': (args: unknown) => executeGetAutomationRule(args),
+  'automation.rules.list': (args: unknown) => executeListAutomationRules(args),
+  'automation.rule.execute': (args: unknown) => executeExecuteAutomationRule(args),
+  'automation.executions.get': (args: unknown) => executeGetAutomationExecutions(args),
+  'automation.rule.validate': (args: unknown) => executeValidateAutomationRule(args),
+  'automation.metrics.get': (args: unknown) => executeGetAutomationMetrics(args),
   
   // Field configuration executors
   'fieldconfig.list': executeGetFieldConfigurations,
@@ -318,6 +319,7 @@ class JiraRestMcpServer {
   private confluenceService: ConfluenceService;
   private confluenceAutomation: ConfluenceAutomation;
   private healthChecker: HealthChecker;
+  private httpServer: HttpServer;
   private serverMetadata: any;
 
   constructor() {
@@ -387,6 +389,9 @@ class JiraRestMcpServer {
     
     this.healthChecker = new HealthChecker(this.jiraClient);
 
+    // Initialize HTTP server for health and metrics
+    this.httpServer = new HttpServer(parseInt(process.env.HTTP_PORT || '9090'));
+
     // Initialize advanced features
     this.initializeAdvancedFeatures();
 
@@ -444,7 +449,7 @@ class JiraRestMcpServer {
         'current_user',
         async () => {
           const response = await this.jiraClient.get('/rest/api/3/myself');
-          return response.data;
+          return response;
         },
         { ttl: 5 * 60 * 1000, tags: ['user'] } // 5 minutes
       );
@@ -454,7 +459,7 @@ class JiraRestMcpServer {
         'server_info',
         async () => {
           const response = await this.jiraClient.get('/rest/api/3/serverInfo');
-          return response.data;
+          return response;
         },
         { ttl: 60 * 60 * 1000, tags: ['server'] } // 1 hour
       );
@@ -543,7 +548,6 @@ class JiraRestMcpServer {
 
         // Record successful execution
         errorHandler.recordSuccess(name);
-        metricsCollector.recordToolExecution(name, 0, true); // Duration recorded by timeOperation
 
         logger.info('Tool execution completed successfully', { 
           tool: name, 
@@ -561,8 +565,6 @@ class JiraRestMcpServer {
           timestamp: Date.now(),
           metadata: { args }
         });
-
-        metricsCollector.recordToolExecution(name, 0, false, error.constructor.name);
 
         // Map and enhance error
         const mappedError = mapJiraApiError(error, requestId);
@@ -689,6 +691,9 @@ class JiraRestMcpServer {
       if (!isHealthy) {
         logger.warn('Server starting with health issues detected');
       }
+
+      // Start HTTP server for health and metrics
+      await this.httpServer.start();
 
       const transport = new StdioServerTransport();
       await this.server.connect(transport);

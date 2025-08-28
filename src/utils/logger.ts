@@ -30,7 +30,7 @@ export class Logger {
   private context: string;
   private logStream?: WriteStream;
 
-  constructor(context: string = 'MCP-Jira', level?: LogLevel) {
+  constructor(context: string = 'MCP-Jira-Server', level?: LogLevel) {
     this.context = context;
     this.level = level ?? this.parseLogLevel(process.env.MCP_LOG_LEVEL || process.env.Q_LOG_LEVEL || 'info');
     
@@ -50,6 +50,10 @@ export class Logger {
       case 'fatal': return LogLevel.FATAL;
       default: return LogLevel.INFO;
     }
+  }
+
+  setLevel(level: LogLevel): void {
+    this.level = level;
   }
 
   private shouldLog(level: LogLevel): boolean {

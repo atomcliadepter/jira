@@ -42,13 +42,11 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# Development files
-src/
+# Development files (allow src/ and tsconfig.json for build)
 tests/
 *.test.ts
 *.spec.ts
 jest.config.js
-tsconfig.json
 
 # Documentation
 *.md

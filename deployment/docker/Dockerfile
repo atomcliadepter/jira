@@ -54,7 +54,7 @@ USER mcpuser
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD node -e "const http = require('http'); \
-    const options = { hostname: 'localhost', port: process.env.HEALTH_PORT || 3000, path: '/health', timeout: 5000 }; \
+    const options = { hostname: 'localhost', port: 9090, path: '/health', timeout: 5000 }; \
     const req = http.request(options, (res) => process.exit(res.statusCode === 200 ? 0 : 1)); \
     req.on('error', () => process.exit(1)); \
     req.end();"
