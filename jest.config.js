@@ -12,7 +12,7 @@ export default {
   },
   testEnvironment: 'node',
   testMatch: [
-    '**/*.test.ts'
+    '**/tests/**/*.test.ts'
   ],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
@@ -26,28 +26,16 @@ export default {
   // Simple project setup
   projects: [
     {
-      displayName: 'tools',
-      testMatch: ['<rootDir>/tests/tool-registration.test.ts']
+      displayName: 'unit',
+      testMatch: ['<rootDir>/tests/unit/**/*.test.ts']
     },
     {
-      displayName: 'automation',
-      testMatch: ['<rootDir>/tests/automationTools.test.ts']
+      displayName: 'integration',
+      testMatch: ['<rootDir>/tests/integration/**/*.test.ts']
     },
     {
-      displayName: 'cli',
-      testMatch: ['<rootDir>/tests/cli-integration.test.ts']
-    },
-    {
-      displayName: 'e2e',
-      testMatch: ['<rootDir>/tests/e2e-integration.test.ts']
-    },
-    {
-      displayName: 'performance',
-      testMatch: ['<rootDir>/tests/performance.test.ts']
-    },
-    {
-      displayName: 'security',
-      testMatch: ['<rootDir>/tests/security-validation.test.ts']
+      displayName: 'existing',
+      testMatch: ['<rootDir>/tests/*.test.ts']
     }
   ]
 };
