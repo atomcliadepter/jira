@@ -53,7 +53,7 @@ export class JiraNotFoundError extends JiraApiError {
 // HTTP client for Jira REST API
 export class JiraRestClient {
   private client: AxiosInstance;
-  private config: JiraConfig;
+  public config: JiraConfig;
 
   constructor(config: JiraConfig) {
     this.config = JiraConfigSchema.parse(config);
@@ -180,6 +180,11 @@ export class JiraRestClient {
   async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response: AxiosResponse<T> = await this.client.delete(url, config);
     return response.data;
+  }
+
+  // Generic request method for custom configurations
+  async request<T = any>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return this.client.request(config);
   }
 
   // Jira-specific convenience methods

@@ -91,27 +91,6 @@ import {
   executeCalculateFieldValue
 } from './tools/customFieldManager.js';
 import {
-  createAutomationRuleTool,
-  updateAutomationRuleTool,
-  deleteAutomationRuleTool,
-  getAutomationRuleTool,
-  listAutomationRulesTool,
-  executeAutomationRuleTool,
-  getAutomationExecutionsTool,
-  validateAutomationRuleTool,
-  getAutomationMetricsTool,
-  executeCreateAutomationRule,
-  executeUpdateAutomationRule,
-  executeDeleteAutomationRule,
-  executeGetAutomationRule,
-  executeListAutomationRules,
-  executeExecuteAutomationRule,
-  executeGetAutomationExecutions,
-  executeValidateAutomationRule,
-  executeGetAutomationMetrics,
-  initializeAutomationEngine
-} from './tools/automationTools.js';
-import {
   getFieldConfigurationsTool,
   createFieldConfigurationTool,
   updateFieldConfigurationTool,
@@ -144,6 +123,90 @@ import {
   handleExportData
 } from './analytics/advancedReporting.js';
 import { confluenceTools, executeConfluenceTool } from './tools/confluenceTools.js';
+
+// Import Phase 1 tools - Issue Links
+import { createIssueLinkTool, executeCreateIssueLink } from './tools/issueLinkCreate.js';
+import { getIssueLinkTool, executeGetIssueLink } from './tools/issueLinkGet.js';
+import { deleteIssueLinkTool, executeDeleteIssueLink } from './tools/issueLinkDelete.js';
+import { listIssueLinkTypesTool, executeListIssueLinkTypes } from './tools/issueLinkTypes.js';
+import { createRemoteIssueLinkTool, executeCreateRemoteIssueLink } from './tools/remoteIssueLinkCreate.js';
+
+// Import Phase 1 tools - Attachments
+import { uploadAttachmentTool, executeUploadAttachment } from './tools/attachmentUpload.js';
+import { getAttachmentTool, executeGetAttachment } from './tools/attachmentGet.js';
+import { downloadAttachmentTool, executeDownloadAttachment } from './tools/attachmentDownload.js';
+import { deleteAttachmentTool, executeDeleteAttachment } from './tools/attachmentDelete.js';
+import { getAttachmentSettingsTool, executeGetAttachmentSettings } from './tools/attachmentSettings.js';
+
+// Import Phase 2 tools - Watchers & Notifications
+import { addWatcherTool, executeAddWatcher } from './tools/watchersAdd.js';
+import { removeWatcherTool, executeRemoveWatcher } from './tools/watchersRemove.js';
+import { listWatchersTool, executeListWatchers } from './tools/watchersList.js';
+import { sendNotificationTool, executeSendNotification } from './tools/notificationsSend.js';
+
+// Import Phase 2 tools - Version Management
+import { createVersionTool, executeCreateVersion } from './tools/versionCreate.js';
+import { updateVersionTool, executeUpdateVersion } from './tools/versionUpdate.js';
+import { deleteVersionTool, executeDeleteVersion } from './tools/versionDelete.js';
+import { getVersionTool, executeGetVersion } from './tools/versionGet.js';
+import { listVersionsTool, executeListVersions } from './tools/versionList.js';
+import { moveVersionTool, executeMoveVersion } from './tools/versionMove.js';
+import { mergeVersionTool, executeMergeVersion } from './tools/versionMerge.js';
+
+// Import Phase 3 tools - Advanced Reporting & Analytics
+import { jqlBuilderTool as newJQLBuilderTool, executeJQLBuilder as executeNewJQLBuilder } from './tools/jqlBuilder.js';
+import { dataExportTool, executeDataExport } from './tools/dataExport.js';
+
+// Import Phase 4 tools - Custom Field Management
+import { createCustomFieldTool as newCreateCustomFieldTool, executeCreateCustomField as executeNewCreateCustomField } from './tools/customFieldCreate.js';
+import { updateCustomFieldTool as newUpdateCustomFieldTool, executeUpdateCustomField as executeNewUpdateCustomField } from './tools/customFieldUpdate.js';
+import { deleteCustomFieldTool as newDeleteCustomFieldTool, executeDeleteCustomField as executeNewDeleteCustomField } from './tools/customFieldDelete.js';
+import { getCustomFieldTool as newGetCustomFieldTool, executeGetCustomField as executeNewGetCustomField } from './tools/customFieldGet.js';
+import { searchCustomFieldTool as newSearchCustomFieldTool, executeSearchCustomField as executeNewSearchCustomField } from './tools/customFieldSearch.js';
+import { createCustomFieldContextTool as newCreateCustomFieldContextTool, executeCreateCustomFieldContext as executeNewCreateCustomFieldContext } from './tools/customFieldContext.js';
+import { setCustomFieldOptionsTool as newSetCustomFieldOptionsTool, executeSetCustomFieldOptions as executeNewSetCustomFieldOptions } from './tools/customFieldOptions.js';
+import { setCascadingCustomFieldTool as newSetCascadingCustomFieldTool, executeSetCascadingCustomField as executeNewSetCascadingCustomField } from './tools/customFieldCascading.js';
+import { validateCustomFieldTool as newValidateCustomFieldTool, executeValidateCustomField as executeNewValidateCustomField } from './tools/customFieldValidate.js';
+import { calculateCustomFieldTool as newCalculateCustomFieldTool, executeCalculateCustomField as executeNewCalculateCustomField } from './tools/customFieldCalculate.js';
+
+// Import Phase 5 tools - Field Configuration Management
+import { listFieldConfigTool, executeListFieldConfig } from './tools/fieldConfigList.js';
+import { createFieldConfigTool, executeCreateFieldConfig } from './tools/fieldConfigCreate.js';
+import { updateFieldConfigTool, executeUpdateFieldConfig } from './tools/fieldConfigUpdate.js';
+import { deleteFieldConfigTool, executeDeleteFieldConfig } from './tools/fieldConfigDelete.js';
+import { updateFieldConfigItemsTool, executeUpdateFieldConfigItems } from './tools/fieldConfigItems.js';
+import { createFieldConfigSchemeTool, executeCreateFieldConfigScheme } from './tools/fieldConfigScheme.js';
+import { assignFieldConfigSchemeTool, executeAssignFieldConfigScheme } from './tools/fieldConfigAssign.js';
+import { validateFieldConfigTool, executeValidateFieldConfig } from './tools/fieldConfigValidate.js';
+import { copyFieldConfigTool, executeCopyFieldConfig } from './tools/fieldConfigCopy.js';
+
+// Import Phase 6 tools - Confluence Integration
+import { createConfluencePageTool, executeCreateConfluencePage } from './tools/confluencePageCreate.js';
+import { updateConfluencePageTool, executeUpdateConfluencePage } from './tools/confluencePageUpdate.js';
+import { getConfluencePageTool, executeGetConfluencePage } from './tools/confluencePageGet.js';
+import { createConfluenceSpaceTool, executeCreateConfluenceSpace } from './tools/confluenceSpaceCreate.js';
+import { linkJiraConfluenceTool, executeLinkJiraConfluence } from './tools/confluenceJiraLink.js';
+import { createConfluenceDocTool, executeCreateConfluenceDoc } from './tools/confluenceDocCreate.js';
+import { searchConfluencePagesTool, executeSearchConfluencePages } from './tools/confluencePageSearch.js';
+import { getConfluenceSpacesTool, executeGetConfluenceSpaces } from './tools/confluenceSpaceGet.js';
+import { getConfluenceSpacePermissionsTool, executeGetConfluenceSpacePermissions } from './tools/confluenceSpacePermissions.js';
+
+// Import Phase 7 tools - Automation Engine
+import { createAutomationRuleTool, executeCreateAutomationRule } from './tools/automationRuleCreate.js';
+import { updateAutomationRuleTool, executeUpdateAutomationRule } from './tools/automationRuleUpdate.js';
+import { deleteAutomationRuleTool, executeDeleteAutomationRule } from './tools/automationRuleDelete.js';
+import { getAutomationRuleTool, executeGetAutomationRule } from './tools/automationRuleGet.js';
+import { listAutomationRulesTool, executeListAutomationRules } from './tools/automationRulesList.js';
+import { executeAutomationRuleTool, executeAutomationRuleExecution } from './tools/automationRuleExecute.js';
+import { getAutomationExecutionsTool, executeGetAutomationExecutions } from './tools/automationExecutionsGet.js';
+import { validateAutomationRuleTool, executeValidateAutomationRule } from './tools/automationRuleValidate.js';
+
+// Import Phase 8 tools - Advanced Reporting & Analytics
+import { advancedDashboardMetricsTool, executeAdvancedDashboardMetrics } from './tools/advancedDashboardMetrics.js';
+import { advancedBurndownChartTool, executeAdvancedBurndownChart } from './tools/advancedBurndownChart.js';
+import { advancedVelocityTrackingTool, executeAdvancedVelocityTracking } from './tools/advancedVelocityTracking.js';
+import { advancedJqlBuilderEnhancedTool, executeAdvancedJqlBuilderEnhanced } from './tools/advancedJqlBuilderEnhanced.js';
+import { advancedExportDataEnhancedTool, executeAdvancedExportDataEnhanced } from './tools/advancedExportDataEnhanced.js';
 
 // Define all available tools
 const TOOLS = [
@@ -196,17 +259,6 @@ const TOOLS = [
   validateFieldValueTool,
   calculateFieldValueTool,
   
-  // Automation engine tools
-  createAutomationRuleTool,
-  updateAutomationRuleTool,
-  deleteAutomationRuleTool,
-  getAutomationRuleTool,
-  listAutomationRulesTool,
-  executeAutomationRuleTool,
-  getAutomationExecutionsTool,
-  validateAutomationRuleTool,
-  getAutomationMetricsTool,
-  
   // Field configuration tools
   getFieldConfigurationsTool,
   createFieldConfigurationTool,
@@ -227,6 +279,90 @@ const TOOLS = [
   
   // Confluence integration tools
   ...confluenceTools,
+  
+  // Phase 1 - Issue Link Management tools
+  createIssueLinkTool,
+  getIssueLinkTool,
+  deleteIssueLinkTool,
+  listIssueLinkTypesTool,
+  createRemoteIssueLinkTool,
+  
+  // Phase 1 - Attachment Management tools
+  uploadAttachmentTool,
+  getAttachmentTool,
+  downloadAttachmentTool,
+  deleteAttachmentTool,
+  getAttachmentSettingsTool,
+  
+  // Phase 2 - Watchers & Notifications tools
+  addWatcherTool,
+  removeWatcherTool,
+  listWatchersTool,
+  sendNotificationTool,
+  
+  // Phase 2 - Version Management tools
+  createVersionTool,
+  updateVersionTool,
+  deleteVersionTool,
+  getVersionTool,
+  listVersionsTool,
+  moveVersionTool,
+  mergeVersionTool,
+  
+  // Phase 3 - Advanced Reporting & Analytics tools
+  newJQLBuilderTool,
+  dataExportTool,
+  
+  // Phase 4 - Custom Field Management tools
+  newCreateCustomFieldTool,
+  newUpdateCustomFieldTool,
+  newDeleteCustomFieldTool,
+  newGetCustomFieldTool,
+  newSearchCustomFieldTool,
+  newCreateCustomFieldContextTool,
+  newSetCustomFieldOptionsTool,
+  newSetCascadingCustomFieldTool,
+  newValidateCustomFieldTool,
+  newCalculateCustomFieldTool,
+  
+  // Phase 5 - Field Configuration Management tools
+  listFieldConfigTool,
+  createFieldConfigTool,
+  updateFieldConfigTool,
+  deleteFieldConfigTool,
+  updateFieldConfigItemsTool,
+  createFieldConfigSchemeTool,
+  assignFieldConfigSchemeTool,
+  validateFieldConfigTool,
+  copyFieldConfigTool,
+  
+  // Phase 6 - Confluence Integration tools
+  createConfluencePageTool,
+  updateConfluencePageTool,
+  getConfluencePageTool,
+  createConfluenceSpaceTool,
+  linkJiraConfluenceTool,
+  createConfluenceDocTool,
+  searchConfluencePagesTool,
+  getConfluenceSpacesTool,
+  getConfluenceSpacePermissionsTool,
+  
+  // Phase 7 - Automation Engine tools
+  createAutomationRuleTool,
+  updateAutomationRuleTool,
+  deleteAutomationRuleTool,
+  getAutomationRuleTool,
+  listAutomationRulesTool,
+  executeAutomationRuleTool,
+  getAutomationExecutionsTool,
+  validateAutomationRuleTool,
+  
+  // Phase 8 - Advanced Reporting & Analytics tools
+  advancedDashboardMetricsTool,
+  advancedBurndownChartTool,
+  advancedVelocityTrackingTool,
+  advancedJqlBuilderEnhancedTool,
+  advancedExportDataEnhancedTool,
 ];
 
 // Global service instances (will be initialized in server constructor)
@@ -271,17 +407,6 @@ const TOOL_EXECUTORS = {
   'customfield.validate': executeValidateFieldValue,
   'customfield.calculate': executeCalculateFieldValue,
   
-  // Automation engine executors
-  'automation.rule.create': (args: unknown) => executeCreateAutomationRule(args),
-  'automation.rule.update': (args: unknown) => executeUpdateAutomationRule(args),
-  'automation.rule.delete': (args: unknown) => executeDeleteAutomationRule(args),
-  'automation.rule.get': (args: unknown) => executeGetAutomationRule(args),
-  'automation.rules.list': (args: unknown) => executeListAutomationRules(args),
-  'automation.rule.execute': (args: unknown) => executeExecuteAutomationRule(args),
-  'automation.executions.get': (args: unknown) => executeGetAutomationExecutions(args),
-  'automation.rule.validate': (args: unknown) => executeValidateAutomationRule(args),
-  'automation.metrics.get': (args: unknown) => executeGetAutomationMetrics(args),
-  
   // Field configuration executors
   'fieldconfig.list': executeGetFieldConfigurations,
   'fieldconfig.create': executeCreateFieldConfiguration,
@@ -300,16 +425,89 @@ const TOOL_EXECUTORS = {
   'advanced.velocity.tracking': handleVelocityTracking,
   'advanced.export.data': handleExportData,
   
-  // Confluence integration executors
-  'confluence.page.create': (args: unknown) => executeConfluenceTool('confluence.page.create', args, confluenceService, jiraClient),
-  'confluence.page.update': (args: unknown) => executeConfluenceTool('confluence.page.update', args, confluenceService),
-  'confluence.page.get': (args: unknown) => executeConfluenceTool('confluence.page.get', args, confluenceService),
-  'confluence.space.create': (args: unknown) => executeConfluenceTool('confluence.space.create', args, confluenceService),
-  'confluence.jira.link': (args: unknown) => executeConfluenceTool('confluence.jira.link', args, confluenceService),
-  'confluence.documentation.create': (args: unknown) => executeConfluenceTool('confluence.documentation.create', args, confluenceService, jiraClient),
-  'confluence.pages.search': (args: unknown) => executeConfluenceTool('confluence.pages.search', args, confluenceService),
-  'confluence.spaces.get': (args: unknown) => executeConfluenceTool('confluence.spaces.get', args, confluenceService),
-  'confluence.space.permissions.get': (args: unknown) => executeConfluenceTool('confluence.space.permissions.get', args, confluenceService),
+  // Phase 1 - Issue Link Management executors
+  'issuelink.create': (args: unknown) => executeCreateIssueLink(args, jiraClient),
+  'issuelink.get': (args: unknown) => executeGetIssueLink(args, jiraClient),
+  'issuelink.delete': (args: unknown) => executeDeleteIssueLink(args, jiraClient),
+  'issuelink.types.list': (args: unknown) => executeListIssueLinkTypes(args, jiraClient),
+  'issuelink.remote.create': (args: unknown) => executeCreateRemoteIssueLink(args, jiraClient),
+  
+  // Phase 1 - Attachment Management executors
+  'attachment.upload': (args: unknown) => executeUploadAttachment(args, jiraClient),
+  'attachment.get': (args: unknown) => executeGetAttachment(args, jiraClient),
+  'attachment.download': (args: unknown) => executeDownloadAttachment(args, jiraClient),
+  'attachment.delete': (args: unknown) => executeDeleteAttachment(args, jiraClient),
+  'attachment.settings.get': (args: unknown) => executeGetAttachmentSettings(args, jiraClient),
+  
+  // Phase 2 - Watchers & Notifications executors
+  'watchers.add': (args: unknown) => executeAddWatcher(args, jiraClient),
+  'watchers.remove': (args: unknown) => executeRemoveWatcher(args, jiraClient),
+  'watchers.list': (args: unknown) => executeListWatchers(args, jiraClient),
+  'notifications.send': (args: unknown) => executeSendNotification(args, jiraClient),
+  
+  // Phase 2 - Version Management executors
+  'version.create': (args: unknown) => executeCreateVersion(args, jiraClient),
+  'version.update': (args: unknown) => executeUpdateVersion(args, jiraClient),
+  'version.delete': (args: unknown) => executeDeleteVersion(args, jiraClient),
+  'version.get': (args: unknown) => executeGetVersion(args, jiraClient),
+  'version.list': (args: unknown) => executeListVersions(args, jiraClient),
+  'version.move': (args: unknown) => executeMoveVersion(args, jiraClient),
+  'version.merge': (args: unknown) => executeMergeVersion(args, jiraClient),
+  
+  // Phase 3 - Advanced Reporting & Analytics executors
+  'advanced.jql.builder.new': (args: unknown) => executeNewJQLBuilder(args, jiraClient),
+  'advanced.export.data.new': (args: unknown) => executeDataExport(args, jiraClient),
+  
+  // Phase 4 - Custom Field Management executors
+  'customfield.create.new': (args: unknown) => executeNewCreateCustomField(args, jiraClient),
+  'customfield.update.new': (args: unknown) => executeNewUpdateCustomField(args, jiraClient),
+  'customfield.delete.new': (args: unknown) => executeNewDeleteCustomField(args, jiraClient),
+  'customfield.get.new': (args: unknown) => executeNewGetCustomField(args, jiraClient),
+  'customfield.search.new': (args: unknown) => executeNewSearchCustomField(args, jiraClient),
+  'customfield.context.create.new': (args: unknown) => executeNewCreateCustomFieldContext(args, jiraClient),
+  'customfield.options.set.new': (args: unknown) => executeNewSetCustomFieldOptions(args, jiraClient),
+  'customfield.cascading.set.new': (args: unknown) => executeNewSetCascadingCustomField(args, jiraClient),
+  'customfield.validate.new': (args: unknown) => executeNewValidateCustomField(args, jiraClient),
+  'customfield.calculate.new': (args: unknown) => executeNewCalculateCustomField(args, jiraClient),
+  
+  // Phase 5 - Field Configuration Management executors
+  'fieldconfig.list.new': (args: unknown) => executeListFieldConfig(args, jiraClient),
+  'fieldconfig.create.new': (args: unknown) => executeCreateFieldConfig(args, jiraClient),
+  'fieldconfig.update.new': (args: unknown) => executeUpdateFieldConfig(args, jiraClient),
+  'fieldconfig.delete.new': (args: unknown) => executeDeleteFieldConfig(args, jiraClient),
+  'fieldconfig.items.update.new': (args: unknown) => executeUpdateFieldConfigItems(args, jiraClient),
+  'fieldconfig.scheme.create.new': (args: unknown) => executeCreateFieldConfigScheme(args, jiraClient),
+  'fieldconfig.scheme.assign.new': (args: unknown) => executeAssignFieldConfigScheme(args, jiraClient),
+  'fieldconfig.validate.new': (args: unknown) => executeValidateFieldConfig(args, jiraClient),
+  'fieldconfig.copy.new': (args: unknown) => executeCopyFieldConfig(args, jiraClient),
+  
+  // Phase 6 - Confluence Integration executors
+  'confluence.page.create': (args: unknown) => executeCreateConfluencePage(args, jiraClient),
+  'confluence.page.update': (args: unknown) => executeUpdateConfluencePage(args, jiraClient),
+  'confluence.page.get': (args: unknown) => executeGetConfluencePage(args, jiraClient),
+  'confluence.space.create': (args: unknown) => executeCreateConfluenceSpace(args, jiraClient),
+  'confluence.jira.link': (args: unknown) => executeLinkJiraConfluence(args, jiraClient),
+  'confluence.documentation.create': (args: unknown) => executeCreateConfluenceDoc(args, jiraClient),
+  'confluence.pages.search': (args: unknown) => executeSearchConfluencePages(args, jiraClient),
+  'confluence.spaces.get': (args: unknown) => executeGetConfluenceSpaces(args, jiraClient),
+  'confluence.space.permissions.get': (args: unknown) => executeGetConfluenceSpacePermissions(args, jiraClient),
+  
+  // Phase 7 - Automation Engine executors
+  'automation.rule.create': (args: unknown) => executeCreateAutomationRule(args, jiraClient),
+  'automation.rule.update': (args: unknown) => executeUpdateAutomationRule(args, jiraClient),
+  'automation.rule.delete': (args: unknown) => executeDeleteAutomationRule(args, jiraClient),
+  'automation.rule.get': (args: unknown) => executeGetAutomationRule(args, jiraClient),
+  'automation.rules.list': (args: unknown) => executeListAutomationRules(args, jiraClient),
+  'automation.rule.execute': (args: unknown) => executeAutomationRuleExecution(args, jiraClient),
+  'automation.executions.get': (args: unknown) => executeGetAutomationExecutions(args, jiraClient),
+  'automation.rule.validate': (args: unknown) => executeValidateAutomationRule(args, jiraClient),
+  
+  // Phase 8 - Advanced Reporting & Analytics executors
+  'advanced.dashboard.metrics.enhanced': (args: unknown) => executeAdvancedDashboardMetrics(args, jiraClient),
+  'advanced.burndown.chart.enhanced': (args: unknown) => executeAdvancedBurndownChart(args, jiraClient),
+  'advanced.velocity.tracking.enhanced': (args: unknown) => executeAdvancedVelocityTracking(args, jiraClient),
+  'advanced.jql.builder.enhanced': (args: unknown) => executeAdvancedJqlBuilderEnhanced(args, jiraClient),
+  'advanced.export.data.enhanced': (args: unknown) => executeAdvancedExportDataEnhanced(args, jiraClient),
 };
 
 class JiraRestMcpServer {
@@ -383,9 +581,6 @@ class JiraRestMcpServer {
     this.confluenceService = new ConfluenceService(this.confluenceClient);
     confluenceService = this.confluenceService; // Assign to global variable for tool executors
     this.confluenceAutomation = new ConfluenceAutomation(this.confluenceService, this.jiraClient);
-    
-    // Initialize automation engine
-    initializeAutomationEngine(this.jiraClient);
     
     this.healthChecker = new HealthChecker(this.jiraClient);
 

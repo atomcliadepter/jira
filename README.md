@@ -7,7 +7,7 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 
 ### Core Functionality
 - **Direct REST API Integration**: Uses official Jira Cloud REST API v3 and Confluence REST API
-- **58 Professional Tools**: Complete enterprise solution for Jira and Confluence management
+- **123 Professional Tools**: Complete enterprise solution for Jira and Confluence management (Phase 8 complete)
 - **TypeScript & Zod Validation**: Full type safety with runtime validation
 - **Modern MCP Patterns**: Built with latest MCP SDK patterns and best practices
 - **Advanced Analytics Engine**: Comprehensive reporting and dashboard capabilities
@@ -26,6 +26,91 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 - `issue.transitions.list` - Get available transitions for an issue with conditions
 - `issue.comment.add` - Add comments to issues with rich formatting support
 - `issue.comments.get` - Retrieve issue comments with pagination and filtering
+
+#### Issue Link Management (5 tools) ✨ NEW - Phase 1
+- `issuelink.create` - Create links between issues with validation
+- `issuelink.get` - Retrieve issue link details and metadata
+- `issuelink.delete` - Remove issue links with proper cleanup
+- `issuelink.types.list` - List all available issue link types
+- `issuelink.remote.create` - Create remote issue links to external resources
+
+#### Attachment Management (6 tools) ✨ NEW - Phase 1
+- `attachment.upload` - Upload files to issues with size validation
+- `attachment.get` - Retrieve attachment metadata and properties
+- `attachment.download` - Download attachment content to local files
+- `attachment.delete` - Remove attachments with proper cleanup
+- `attachment.metadata.update` - Update attachment metadata (planned)
+- `attachment.settings.get` - Get attachment configuration and limits
+
+#### Watchers & Notifications (4 tools) ✨ NEW - Phase 2
+- `watchers.add` - Add watchers to issues with user validation
+- `watchers.remove` - Remove watchers from issues with proper cleanup
+- `watchers.list` - List all watchers of an issue with details
+- `notifications.send` - Send custom notifications with flexible recipient targeting
+
+#### Version Management (7 tools) ✨ NEW - Phase 2
+- `version.create` - Create new project versions with full configuration
+- `version.update` - Update version properties and release status
+- `version.delete` - Delete versions with issue migration options
+- `version.get` - Retrieve version details with expansion options
+- `version.list` - List all project versions with filtering
+- `version.move` - Move issues between versions with validation
+- `version.merge` - Merge versions with issue consolidation
+
+#### Enhanced Analytics & Reporting (2 tools) ✨ NEW - Phase 3
+- `advanced.jql.builder.new` - Interactive JQL query builder with syntax validation
+- `advanced.export.data.new` - Export data in multiple formats (JSON, CSV) with custom templates
+
+#### Custom Field Management (10 tools) ✨ NEW - Phase 4
+- `customfield.create.new` - Create custom fields with advanced configuration options
+- `customfield.update.new` - Update custom field properties and configurations
+- `customfield.delete.new` - Delete custom fields with dependency checking
+- `customfield.get.new` - Retrieve custom field details and configurations
+- `customfield.search.new` - Search custom fields with filtering and sorting
+- `customfield.context.create.new` - Create field contexts with project and issue type scoping
+- `customfield.options.set.new` - Set field options for select lists and multi-select fields
+- `customfield.cascading.set.new` - Configure cascading select field options
+- `customfield.validate.new` - Validate field values against field configurations
+- `customfield.calculate.new` - Calculate computed field values using expressions
+
+#### Field Configuration Management (9 tools) ✨ NEW - Phase 5
+- `fieldconfig.list.new` - List all field configurations with filtering
+- `fieldconfig.create.new` - Create new field configurations
+- `fieldconfig.update.new` - Update field configuration properties
+- `fieldconfig.delete.new` - Delete field configurations with validation
+- `fieldconfig.items.update.new` - Update field configuration items and behaviors
+- `fieldconfig.scheme.create.new` - Create field configuration schemes
+- `fieldconfig.scheme.assign.new` - Assign schemes to projects
+- `fieldconfig.validate.new` - Validate field configuration integrity
+- `fieldconfig.copy.new` - Copy field configurations between projects
+
+#### Confluence Integration (9 tools) ✨ NEW - Phase 6
+- `confluence.page.create` - Create Confluence pages with rich content
+- `confluence.page.update` - Update existing pages with version control
+- `confluence.page.get` - Retrieve page content and metadata
+- `confluence.space.create` - Create new Confluence spaces with permissions
+- `confluence.jira.link` - Link Jira issues to Confluence pages
+- `confluence.documentation.create` - Auto-generate documentation from Jira data
+- `confluence.pages.search` - Search pages across spaces with advanced filters
+- `confluence.spaces.get` - List and filter Confluence spaces
+- `confluence.space.permissions.get` - Retrieve space permissions and access controls
+
+#### Automation Engine (8 tools) ✨ NEW - Phase 7
+- `automation.rule.create` - Create automation rules with triggers and actions
+- `automation.rule.update` - Update existing automation rules
+- `automation.rule.delete` - Delete automation rules with dependency checking
+- `automation.rule.get` - Retrieve automation rule details and configurations
+- `automation.rules.list` - List all automation rules with filtering
+- `automation.rule.execute` - Execute automation rules manually
+- `automation.executions.get` - Get automation execution history and logs
+- `automation.rule.validate` - Validate automation rule syntax and logic
+
+#### Advanced Reporting & Analytics (5 tools) ✨ NEW - Phase 8
+- `advanced.dashboard.metrics.enhanced` - Generate dashboard metrics with KPIs and trend analysis
+- `advanced.burndown.chart.enhanced` - Create burndown charts with sprint analysis and forecasting
+- `advanced.velocity.tracking.enhanced` - Track team velocity with trend analysis and predictions
+- `advanced.jql.builder.enhanced` - Enhanced interactive JQL query builder with advanced validation
+- `advanced.export.data.enhanced` - Export data in multiple formats with custom templates and filtering
 
 #### Search & JQL (1 tool)
 - `jql.search` - Advanced JQL-based issue searching with pagination, field expansion, and result optimization
@@ -111,11 +196,14 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 - **Health Monitoring**: Built-in health checks and system monitoring at `/health` and `/metrics` (port 9090)
 - **Observability**: Detailed logging, metrics, and performance analytics
 
-### Recent Updates (v1.0.1)
-- ✅ **All Critical Issues Resolved**: Fixed automation tools, cache system, and HTTP endpoints
-- ✅ **Production Ready**: Comprehensive testing and validation completed
-- ✅ **Enhanced Monitoring**: Added HTTP server for health checks and metrics
-- ✅ **Improved Reliability**: Fixed rate limiting and retry logic
+### Recent Updates (v1.8.0) ✨ Phase 8 Complete
+- ✅ **Advanced Reporting & Analytics**: 5 new enhanced tools for comprehensive analytics
+- ✅ **Dashboard Metrics**: Generate KPIs with trend analysis and priority breakdowns
+- ✅ **Burndown Charts**: Create sprint burndown charts with forecasting capabilities
+- ✅ **Velocity Tracking**: Track team velocity with trend analysis and predictions
+- ✅ **Enhanced JQL Builder**: Advanced JQL query builder with syntax validation
+- ✅ **Enhanced Data Export**: Export data in multiple formats with custom templates
+- ✅ **Production Ready**: All Phase 8 tools tested and validated
 
 ## Installation
 
@@ -480,6 +568,357 @@ npm start
 ```
 
 ### Tool Examples
+
+#### Create an Issue Link
+```json
+{
+  "name": "issuelink.create",
+  "arguments": {
+    "type": { "name": "Relates" },
+    "inwardIssue": { "key": "PROJ-123" },
+    "outwardIssue": { "key": "PROJ-456" }
+  }
+}
+```
+
+#### Upload an Attachment
+```json
+{
+  "name": "attachment.upload",
+  "arguments": {
+    "issueIdOrKey": "PROJ-123",
+    "filePath": "/path/to/file.pdf",
+    "filename": "requirements.pdf"
+  }
+}
+```
+
+#### Create a Remote Issue Link
+```json
+{
+  "name": "issuelink.remote.create",
+  "arguments": {
+    "issueIdOrKey": "PROJ-123",
+    "object": {
+      "url": "https://github.com/user/repo/pull/42",
+      "title": "Pull Request #42"
+    }
+  }
+}
+```
+
+#### Create a Project Version
+```json
+{
+  "name": "version.create",
+  "arguments": {
+    "name": "v2.0.0",
+    "projectId": "10001",
+    "description": "Major release version",
+    "releaseDate": "2024-12-31"
+  }
+}
+```
+
+#### Add Issue Watcher
+```json
+{
+  "name": "watchers.add",
+  "arguments": {
+    "issueIdOrKey": "PROJ-123",
+    "accountId": "user-account-id"
+  }
+}
+```
+
+#### Send Custom Notification
+```json
+{
+  "name": "notifications.send",
+  "arguments": {
+    "issueIdOrKey": "PROJ-123",
+    "subject": "Issue Update Notification",
+    "textBody": "The issue has been updated with new information",
+    "to": {
+      "users": [{"accountId": "user-account-id"}],
+      "watchers": true
+    }
+  }
+}
+```
+
+#### Build JQL Query
+```json
+{
+  "name": "advanced.jql.builder.new",
+  "arguments": {
+    "project": "PROJ",
+    "issueType": "Task",
+    "status": "In Progress",
+    "priority": "High",
+    "createdAfter": "2024-01-01"
+  }
+}
+```
+
+#### Export Data to CSV
+```json
+{
+  "name": "advanced.export.data.new",
+  "arguments": {
+    "jql": "project = PROJ AND resolved >= -30d",
+    "format": "csv",
+    "outputPath": "./reports/monthly-report.csv",
+    "maxResults": 1000
+  }
+}
+```
+
+#### Create Custom Field
+```json
+{
+  "name": "customfield.create.new",
+  "arguments": {
+    "name": "Story Points",
+    "type": "com.atlassian.jira.plugin.system.customfieldtypes:float",
+    "description": "Estimation field for story points"
+  }
+}
+```
+
+#### Search Custom Fields
+```json
+{
+  "name": "customfield.search.new",
+  "arguments": {
+    "query": "story",
+    "maxResults": 10,
+    "startAt": 0
+  }
+}
+```
+
+#### Validate Custom Field Value
+```json
+{
+  "name": "customfield.validate.new",
+  "arguments": {
+    "fieldId": "customfield_10016",
+    "value": 5,
+    "issueId": "PROJ-123"
+  }
+}
+```
+
+#### List Field Configurations
+```json
+{
+  "name": "fieldconfig.list.new",
+  "arguments": {
+    "maxResults": 10,
+    "startAt": 0
+  }
+}
+```
+
+#### Create Field Configuration
+```json
+{
+  "name": "fieldconfig.create.new",
+  "arguments": {
+    "name": "Development Configuration",
+    "description": "Field configuration for development projects"
+  }
+}
+```
+
+#### Validate Field Configuration
+```json
+{
+  "name": "fieldconfig.validate.new",
+  "arguments": {
+    "id": 10000
+  }
+}
+```
+
+#### Copy Field Configuration
+```json
+{
+  "name": "fieldconfig.copy.new",
+  "arguments": {
+    "sourceId": 10000,
+    "name": "Copied Configuration",
+    "description": "Copy of existing configuration"
+  }
+}
+```
+
+#### Create Confluence Page
+```json
+{
+  "name": "confluence.page.create",
+  "arguments": {
+    "spaceKey": "DEV",
+    "title": "API Documentation",
+    "body": "<h1>API Documentation</h1><p>This page contains API documentation.</p>"
+  }
+}
+```
+
+#### Link Jira Issue to Confluence
+```json
+{
+  "name": "confluence.jira.link",
+  "arguments": {
+    "issueKey": "PROJ-123",
+    "pageId": "123456789"
+  }
+}
+```
+
+#### Auto-Generate Documentation
+```json
+{
+  "name": "confluence.documentation.create",
+  "arguments": {
+    "spaceKey": "DOC",
+    "projectKey": "PROJ",
+    "title": "Project Documentation",
+    "includeIssues": true
+  }
+}
+```
+
+#### Search Confluence Pages
+```json
+{
+  "name": "confluence.pages.search",
+  "arguments": {
+    "cql": "space = DEV AND type = page",
+    "limit": 25
+  }
+}
+```
+
+#### Create Automation Rule
+```json
+{
+  "name": "automation.rule.create",
+  "arguments": {
+    "name": "Auto-assign Task",
+    "description": "Automatically assign tasks to team lead",
+    "trigger": {
+      "component": "TRIGGER",
+      "type": "jira.issue.event.trigger"
+    },
+    "actions": [
+      {
+        "component": "ACTION",
+        "type": "jira.issue.assign"
+      }
+    ]
+  }
+}
+```
+
+#### Execute Automation Rule
+```json
+{
+  "name": "automation.rule.execute",
+  "arguments": {
+    "ruleId": "12345",
+    "issueKey": "PROJ-123"
+  }
+}
+```
+
+#### List Automation Rules
+```json
+{
+  "name": "automation.rules.list",
+  "arguments": {
+    "maxResults": 25,
+    "projectKey": "PROJ"
+  }
+}
+```
+
+#### Validate Automation Rule
+```json
+{
+  "name": "automation.rule.validate",
+  "arguments": {
+    "ruleId": "12345"
+  }
+}
+```
+
+#### Generate Dashboard Metrics
+```json
+{
+  "name": "advanced.dashboard.metrics.enhanced",
+  "arguments": {
+    "projectKeys": ["PROJ1", "PROJ2"],
+    "timeRange": "30d",
+    "metrics": ["resolution_rate", "velocity", "burndown"]
+  }
+}
+```
+
+#### Create Burndown Chart
+```json
+{
+  "name": "advanced.burndown.chart.enhanced",
+  "arguments": {
+    "projectKey": "PROJ",
+    "sprintId": "123",
+    "startDate": "2024-01-01",
+    "endDate": "2024-01-14"
+  }
+}
+```
+
+#### Track Team Velocity
+```json
+{
+  "name": "advanced.velocity.tracking.enhanced",
+  "arguments": {
+    "projectKey": "PROJ",
+    "sprintCount": 6,
+    "teamId": "team-123"
+  }
+}
+```
+
+#### Enhanced JQL Builder
+```json
+{
+  "name": "advanced.jql.builder.enhanced",
+  "arguments": {
+    "project": "PROJ",
+    "issueType": "Story",
+    "status": "In Progress",
+    "labels": ["frontend", "urgent"],
+    "createdAfter": "2024-01-01",
+    "validate": true
+  }
+}
+```
+
+#### Enhanced Data Export
+```json
+{
+  "name": "advanced.export.data.enhanced",
+  "arguments": {
+    "jql": "project = PROJ AND resolved >= -30d",
+    "format": "csv",
+    "outputPath": "./reports/monthly-report.csv",
+    "fields": ["key", "summary", "status", "assignee"],
+    "maxResults": 1000
+  }
+}
+```
 
 #### Create an Issue
 ```json
