@@ -52,7 +52,7 @@ export class JiraNotFoundError extends JiraApiError {
 
 // HTTP client for Jira REST API
 export class JiraRestClient {
-  private client: AxiosInstance;
+  protected client: AxiosInstance;
   public config: JiraConfig;
 
   constructor(config: JiraConfig) {

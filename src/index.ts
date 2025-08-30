@@ -11,6 +11,10 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { JiraRestClient, JiraConfigSchema } from './http/JiraRestClient.js';
 import { ConfluenceRestClient, ConfluenceConfigSchema } from './http/ConfluenceRestClient.js';
+import { EnhancedJiraRestClient } from './http/EnhancedJiraRestClient.js';
+import { PermissionManager } from './auth/PermissionManager.js';
+import { JsonRpcHandler, JsonRpcError, JSON_RPC_ERRORS } from './protocol/JsonRpcHandler.js';
+import { AuditLogger, AuditEventType } from './audit/AuditLogger.js';
 import { HttpServer } from './http/HttpServer.js';
 import { ConfluenceService } from './services/ConfluenceService.js';
 import { ConfluenceAutomation } from './automation/ConfluenceAutomation.js';
@@ -18,7 +22,7 @@ import { config } from 'dotenv';
 import { logger, generateRequestId } from './utils/logger.js';
 import { configValidator } from './utils/configValidator.js';
 import { HealthChecker } from './utils/healthCheck.js';
-import { createError, mapJiraApiError, McpJiraError } from './utils/errorCodes.js';
+import { createError, mapJiraApiError, McpJiraError, ErrorCategory } from './utils/errorCodes.js';
 import { metricsCollector } from './monitoring/MetricsCollector.js';
 import { errorHandler } from './errors/ErrorHandler.js';
 import { cacheManager } from './cache/CacheManager.js';
@@ -512,13 +516,16 @@ const TOOL_EXECUTORS = {
 
 class JiraRestMcpServer {
   private server: Server;
-  private jiraClient: JiraRestClient;
+  private jiraClient: EnhancedJiraRestClient;
   private confluenceClient: ConfluenceRestClient;
   private confluenceService: ConfluenceService;
   private confluenceAutomation: ConfluenceAutomation;
   private healthChecker: HealthChecker;
   private httpServer: HttpServer;
   private serverMetadata: any;
+  private permissionManager?: PermissionManager;
+  private jsonRpcHandler: JsonRpcHandler;
+  private auditLogger: AuditLogger;
 
   constructor() {
     // Load and validate configuration
@@ -552,7 +559,7 @@ class JiraRestMcpServer {
       }
     );
 
-    // Initialize Jira client with validated config
+    // Initialize Enhanced Jira client with OAuth support
     const jiraConfig = JiraConfigSchema.parse({
       baseUrl: validatedConfig.JIRA_BASE_URL,
       email: validatedConfig.JIRA_EMAIL,
@@ -563,7 +570,14 @@ class JiraRestMcpServer {
       retryDelay: parseInt(validatedConfig.RETRY_DELAY || '1000'),
     });
 
-    this.jiraClient = new JiraRestClient(jiraConfig);
+    this.jiraClient = new EnhancedJiraRestClient({
+      ...jiraConfig,
+      oauthClientId: validatedConfig.OAUTH_CLIENT_ID,
+      oauthClientSecret: validatedConfig.OAUTH_CLIENT_SECRET,
+      oauthRedirectUri: validatedConfig.OAUTH_REDIRECT_URI,
+      siteId: validatedConfig.JIRA_SITE_ID,
+      autoRefreshTokens: true,
+    });
     jiraClient = this.jiraClient; // Assign to global variable for tool executors
     
     // Initialize Confluence client with same config (can be overridden with CONFLUENCE_* env vars)
@@ -587,11 +601,39 @@ class JiraRestMcpServer {
     // Initialize HTTP server for health and metrics
     this.httpServer = new HttpServer(parseInt(process.env.HTTP_PORT || '9090'));
 
+    // Initialize JSON-RPC handler
+    this.jsonRpcHandler = new JsonRpcHandler();
+
+    // Initialize audit logger
+    this.auditLogger = new AuditLogger(
+      process.env.AUDIT_LOG_DIR || './logs/audit',
+      process.env.AUDIT_ENABLED !== 'false'
+    );
+
+    // Initialize permission manager if configured
+    this.initializePermissionManager(validatedConfig);
+
     // Initialize advanced features
     this.initializeAdvancedFeatures();
 
     this.setupHandlers();
     logger.info('MCP Jira REST Server initialized successfully');
+  }
+
+  private initializePermissionManager(config: any): void {
+    try {
+      const permissionConfigPath = config.PERMISSION_CONFIG_PATH || './config/permissions.json';
+      const permissionConfig = JSON.parse(readFileSync(permissionConfigPath, 'utf-8'));
+      this.permissionManager = new PermissionManager(permissionConfig);
+      logger.info('Permission manager initialized', { configPath: permissionConfigPath });
+    } catch (error) {
+      logger.warn('Permission manager not initialized, using default policy', error);
+      // Use default permissive policy
+      this.permissionManager = new PermissionManager({
+        agents: {},
+        defaultPolicy: { allowAll: true, readOnly: false, maxRequestsPerMinute: 100 }
+      });
+    }
   }
 
   private initializeAdvancedFeatures(): void {
@@ -710,29 +752,92 @@ class JiraRestMcpServer {
       }
     });
 
-    // Call tool handler with enhanced error handling
+    // Call tool handler with enhanced error handling and JSON-RPC compliance
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const requestId = generateRequestId();
       const { name, arguments: args } = request.params;
       
       logger.info('Tool execution started', { tool: name, requestId });
 
+      // Check permissions
+      if (this.permissionManager) {
+        const agentId = 'default-agent'; // TODO: Extract from request context
+        const permissionResult = this.permissionManager.checkToolAccess(agentId, name);
+        
+        if (!permissionResult.allowed) {
+          // Audit authorization failure
+          this.auditLogger.logAuthorization({
+            agentId,
+            action: `tool_access_${name}`,
+            resource: name,
+            outcome: 'blocked',
+            details: { reason: permissionResult.reason },
+            requestId,
+          });
+
+          const error = new McpJiraError(
+            'PERMISSION_DENIED',
+            permissionResult.reason || 'Access denied',
+            ErrorCategory.PERMISSION,
+            { tool: name, agent: agentId },
+            requestId
+          );
+          logger.warn('Tool access denied', { tool: name, agent: agentId, reason: permissionResult.reason });
+          throw error.toJsonRpcError();
+        }
+
+        if (permissionResult.requiresConfirmation) {
+          // Audit destructive operation attempt
+          this.auditLogger.logSecurityViolation({
+            agentId,
+            action: `destructive_operation_${name}`,
+            details: { tool: name, requiresConfirmation: true },
+            requestId,
+          });
+          logger.warn('Destructive operation requires confirmation', { tool: name });
+        }
+
+        // Audit successful authorization
+        this.auditLogger.logAuthorization({
+          agentId,
+          action: `tool_access_${name}`,
+          resource: name,
+          outcome: 'success',
+          requestId,
+        });
+
+        this.permissionManager.recordRequest(agentId);
+      }
+
       // Check circuit breaker
       if (!errorHandler.shouldAllowOperation(name)) {
-        const error = createError('TOOL_EXECUTION_ERROR', { tool: name, reason: 'Circuit breaker open' }, requestId);
+        // Audit rate limit violation
+        this.auditLogger.logRateLimit({
+          action: `circuit_breaker_${name}`,
+          resource: name,
+          details: { reason: 'Circuit breaker open' },
+          requestId,
+        });
+
+        const error = new JsonRpcError(
+          JSON_RPC_ERRORS.INTERNAL_ERROR,
+          'Service temporarily unavailable',
+          { tool: name, reason: 'Circuit breaker open' }
+        );
         logger.warn('Tool execution blocked by circuit breaker', { tool: name, requestId });
         throw error;
       }
 
       const executor = TOOL_EXECUTORS[name as keyof typeof TOOL_EXECUTORS];
       if (!executor) {
-        const error = createError('TOOL_NOT_FOUND_ERROR', { tool: name }, requestId);
-        logger.error('Tool not found', error, requestId);
+        const error = JsonRpcHandler.methodNotFound(name);
+        logger.error('Tool not found', { tool: name, requestId });
         throw error;
       }
 
       try {
         // Execute tool with monitoring
+        const startTime = Date.now();
         const result = await metricsCollector.timeOperation(
           `tool_execution_${name}`,
           async () => {
@@ -743,6 +848,15 @@ class JiraRestMcpServer {
 
         // Record successful execution
         errorHandler.recordSuccess(name);
+
+        // Audit successful tool execution
+        this.auditLogger.logToolExecution({
+          action: `execute_${name}`,
+          resource: name,
+          outcome: 'success',
+          details: { executionTime: Date.now() - startTime },
+          requestId,
+        });
 
         logger.info('Tool execution completed successfully', { 
           tool: name, 
@@ -761,8 +875,26 @@ class JiraRestMcpServer {
           metadata: { args }
         });
 
+        // Audit error
+        this.auditLogger.logError({
+          action: `execute_${name}`,
+          details: { 
+            error: error.message,
+            recovered: errorResult.recovered,
+            recoveryAction: errorResult.action 
+          },
+          requestId,
+        });
+
         // Map and enhance error
-        const mappedError = mapJiraApiError(error, requestId);
+        let mappedError: JsonRpcError;
+        if (error instanceof McpJiraError) {
+          mappedError = error.toJsonRpcError();
+        } else {
+          const mcpError = mapJiraApiError(error, requestId);
+          mappedError = mcpError.toJsonRpcError();
+        }
+
         logger.error('Tool execution failed', {
           tool: name,
           error: mappedError,

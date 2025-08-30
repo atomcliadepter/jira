@@ -1,0 +1,45 @@
+{
+  "agents": {
+    "q-cli-agent": {
+      "allowedTools": [
+        "issue.get",
+        "issue.create",
+        "issue.update",
+        "issue.transition",
+        "jql.search",
+        "project.get",
+        "user.get",
+        "issue.comment.add",
+        "attachment.upload",
+        "attachment.get"
+      ],
+      "readOnly": false,
+      "maxRequestsPerMinute": 100
+    },
+    "read-only-agent": {
+      "allowedTools": [
+        "issue.get",
+        "jql.search",
+        "project.get",
+        "user.get",
+        "issue.comments.get",
+        "attachment.get",
+        "version.list",
+        "workflow.analytics"
+      ],
+      "readOnly": true,
+      "maxRequestsPerMinute": 50
+    },
+    "admin-agent": {
+      "allowedTools": ["*"],
+      "deniedTools": [],
+      "readOnly": false,
+      "maxRequestsPerMinute": 200
+    }
+  },
+  "defaultPolicy": {
+    "allowAll": false,
+    "readOnly": true,
+    "maxRequestsPerMinute": 30
+  }
+}
