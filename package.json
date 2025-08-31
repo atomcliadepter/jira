@@ -54,6 +54,8 @@
     "automation-cli": "node dist/cli/automation-cli.js",
     "customfield-cli": "node dist/cli/customfield-cli.js",
     "docs:generate": "node -e \"console.log('API documentation available at docs/API_REFERENCE.md')\"",
+    "tools:count": "node -e \"const fs=require('fs'); const content=fs.readFileSync('src/index.ts','utf8'); const match=content.match(/const TOOL_EXECUTORS = \\\\{([^}]+)\\\\}/s); console.log(match ? match[1].split('\\\\n').filter(line => line.includes(':')).length : 0);\"",
+    "tools:sync-docs": "node scripts/sync-tool-count.cjs",
     "tools:list": "node -e \"const tools = require('./dist/index.js').TOOLS || []; console.log('Available tools:', tools.length); tools.forEach(t => console.log('- ' + t.name));\"",
     "server:info": "node -e \"console.log('Enhanced MCP Jira REST Server v1.8.0'); console.log('Tools: 111'); console.log('Features: Analytics, Automation, Custom Fields, Confluence');\""
   },
