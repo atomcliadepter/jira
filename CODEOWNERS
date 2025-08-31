@@ -1,0 +1,35 @@
+# Global code owners
+* @atomcliadepter
+
+# Core application code
+/src/ @atomcliadepter
+/src/index.ts @atomcliadepter
+
+# Authentication and security
+/src/auth/ @atomcliadepter
+/src/audit/ @atomcliadepter
+/SECURITY.md @atomcliadepter
+
+# Tools and API
+/src/tools/ @atomcliadepter
+/src/http/ @atomcliadepter
+
+# Configuration and deployment
+/deployment/ @atomcliadepter
+/.github/ @atomcliadepter
+/scripts/ @atomcliadepter
+
+# Documentation
+/docs/ @atomcliadepter
+/README.md @atomcliadepter
+/CONTRIBUTING.md @atomcliadepter
+
+# Package and dependencies
+/package.json @atomcliadepter
+/package-lock.json @atomcliadepter
+
+# Tests
+/tests/ @atomcliadepter
+
+# Monitoring and observability
+/monitoring/ @atomcliadepter

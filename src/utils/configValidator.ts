@@ -15,6 +15,14 @@ export interface JiraConfig {
   JIRA_EMAIL?: string;
   JIRA_API_TOKEN?: string;
   JIRA_OAUTH_ACCESS_TOKEN?: string;
+  
+  // OAuth 2.0 configuration
+  OAUTH_CLIENT_ID?: string;
+  OAUTH_CLIENT_SECRET?: string;
+  OAUTH_REDIRECT_URI?: string;
+  OAUTH_SCOPES?: string;
+  JIRA_SITE_ID?: string;
+  
   CONFLUENCE_BASE_URL?: string;
   CONFLUENCE_EMAIL?: string;
   CONFLUENCE_API_TOKEN?: string;
@@ -24,6 +32,7 @@ export interface JiraConfig {
   RETRY_DELAY?: string;
   MCP_SERVER_NAME?: string;
   MCP_SERVER_VERSION?: string;
+  PERMISSION_CONFIG_PATH?: string;
 }
 
 export class ConfigValidator {

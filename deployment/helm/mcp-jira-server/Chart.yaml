@@ -1,0 +1,17 @@
+apiVersion: v2
+name: mcp-jira-server
+description: Enhanced MCP Jira REST Server Helm Chart
+type: application
+version: 1.8.0
+appVersion: "1.8.0"
+keywords:
+  - mcp
+  - jira
+  - rest-api
+  - automation
+home: https://github.com/atomcliadepter/jira
+sources:
+  - https://github.com/atomcliadepter/jira
+maintainers:
+  - name: MCP Team
+    email: support@example.com

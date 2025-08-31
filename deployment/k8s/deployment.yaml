@@ -37,7 +37,7 @@ spec:
       
       containers:
       - name: mcp-jira-server
-        image: mcp-jira-server:1.0.0
+        image: IMAGE_PLACEHOLDER
         imagePullPolicy: IfNotPresent
         
         ports:

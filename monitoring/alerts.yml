@@ -1,0 +1,88 @@
+groups:
+  - name: mcp-jira-server
+    rules:
+      # Server Health Alerts
+      - alert: MCPServerDown
+        expr: up{job="mcp-jira-server"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MCP Jira Server is down"
+          description: "MCP Jira Server has been down for more than 1 minute"
+
+      - alert: MCPServerHighMemoryUsage
+        expr: process_resident_memory_bytes{job="mcp-jira-server"} > 512 * 1024 * 1024
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP Server high memory usage"
+          description: "MCP Server memory usage is above 512MB for 5 minutes"
+
+      # Performance Alerts
+      - alert: MCPHighResponseTime
+        expr: histogram_quantile(0.95, rate(mcp_tool_execution_duration_ms_bucket[5m])) > 5000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP Server high response time"
+          description: "95th percentile response time is above 5 seconds"
+
+      - alert: MCPLowSuccessRate
+        expr: rate(mcp_tool_executions_total{success="true"}[5m]) / rate(mcp_tool_executions_total[5m]) * 100 < 95
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP Server low success rate"
+          description: "Tool execution success rate is below 95%"
+
+      # Security Alerts
+      - alert: MCPSecurityViolations
+        expr: rate(mcp_audit_events_total{event_type="security_violation"}[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MCP Server security violations detected"
+          description: "Security violations detected at rate {{ $value }}/sec"
+
+      - alert: MCPAuthenticationFailures
+        expr: rate(mcp_audit_events_total{event_type="authentication",outcome="failure"}[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP Server high authentication failure rate"
+          description: "Authentication failures at rate {{ $value }}/sec"
+
+      - alert: MCPRateLimitExceeded
+        expr: rate(mcp_rate_limit_exceeded_total[5m]) > 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP Server rate limits exceeded"
+          description: "Rate limits exceeded at rate {{ $value }}/sec"
+
+      # Cache Performance
+      - alert: MCPLowCacheHitRate
+        expr: rate(mcp_cache_hits_total[5m]) / (rate(mcp_cache_hits_total[5m]) + rate(mcp_cache_misses_total[5m])) * 100 < 70
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP Server low cache hit rate"
+          description: "Cache hit rate is below 70%: {{ $value }}%"
+
+      # Jira Connectivity
+      - alert: MCPJiraConnectivityIssues
+        expr: rate(mcp_jira_api_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP Server Jira connectivity issues"
+          description: "Jira API errors at rate {{ $value }}/sec"

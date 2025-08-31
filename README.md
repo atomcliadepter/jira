@@ -7,7 +7,7 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 
 ### Core Functionality
 - **Direct REST API Integration**: Uses official Jira Cloud REST API v3 and Confluence REST API
-- **123 Professional Tools**: Complete enterprise solution for Jira and Confluence management (Phase 8 complete)
+- **111 Professional Tools**: Complete enterprise solution for Jira and Confluence management
 - **TypeScript & Zod Validation**: Full type safety with runtime validation
 - **Modern MCP Patterns**: Built with latest MCP SDK patterns and best practices
 - **Advanced Analytics Engine**: Comprehensive reporting and dashboard capabilities
@@ -105,7 +105,7 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 - `automation.executions.get` - Get automation execution history and logs
 - `automation.rule.validate` - Validate automation rule syntax and logic
 
-#### Advanced Reporting & Analytics (5 tools) ✨ NEW - Phase 8
+#### Advanced Reporting & Analytics (5 tools)
 - `advanced.dashboard.metrics.enhanced` - Generate dashboard metrics with KPIs and trend analysis
 - `advanced.burndown.chart.enhanced` - Create burndown charts with sprint analysis and forecasting
 - `advanced.velocity.tracking.enhanced` - Track team velocity with trend analysis and predictions
@@ -196,14 +196,14 @@ A comprehensive, enterprise-grade Model Context Protocol (MCP) server for Jira a
 - **Health Monitoring**: Built-in health checks and system monitoring at `/health` and `/metrics` (port 9090)
 - **Observability**: Detailed logging, metrics, and performance analytics
 
-### Recent Updates (v1.8.0) ✨ Phase 8 Complete
+### Recent Updates (v1.8.0)
 - ✅ **Advanced Reporting & Analytics**: 5 new enhanced tools for comprehensive analytics
 - ✅ **Dashboard Metrics**: Generate KPIs with trend analysis and priority breakdowns
 - ✅ **Burndown Charts**: Create sprint burndown charts with forecasting capabilities
 - ✅ **Velocity Tracking**: Track team velocity with trend analysis and predictions
 - ✅ **Enhanced JQL Builder**: Advanced JQL query builder with syntax validation
 - ✅ **Enhanced Data Export**: Export data in multiple formats with custom templates
-- ✅ **Production Ready**: All Phase 8 tools tested and validated
+- ✅ **Production Ready**: All tools tested and validated
 
 ## Installation
 
@@ -389,7 +389,7 @@ const userData = await cacheManager.getOrSet(
 - **Memory Pressure Handling**: Adaptive behavior under memory constraints
 
 #### Performance Benchmarks
-- **Tool Registration**: < 100ms for 58 tools
+- **Tool Registration**: < 100ms for 111 tools
 - **Tool Lookup**: < 10ms for 1000 operations
 - **Memory Usage**: < 50MB increase under load
 - **Concurrent Operations**: 50 operations < 100ms
@@ -534,7 +534,7 @@ RATE_LIMIT_MAX=100
 
 ### Deployment Guide
 
-For detailed production deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md):
+For detailed production deployment instructions, see [Production Deployment Guide](docs/PRODUCTION_DEPLOYMENT.md):
 
 - Prerequisites and system requirements
 - Environment configuration and secrets
@@ -1156,7 +1156,7 @@ If you're migrating from the original MCP Jira SDK that used jira.js:
 
 ### Key Differences
 1. **Direct REST API**: No more jira.js dependency
-2. **Comprehensive Tool Set**: 58 tools instead of basic functionality
+2. **Comprehensive Tool Set**: 111 tools instead of basic functionality
 3. **Modern Architecture**: Advanced automation, analytics, and reporting capabilities
 4. **Enhanced Performance**: Optimized HTTP client with better retry logic
 5. **Enterprise Features**: Custom fields, field configurations, and Confluence integration

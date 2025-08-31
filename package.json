@@ -20,7 +20,10 @@
     "test:all": "jest --selectProjects unit integration existing",
     "test:security": "jest --selectProjects security",
     "test:performance": "jest --selectProjects performance --testTimeout=60000",
-    "test:automation": "jest --selectProjects automation",
+    "test:automation": "jest tests/integration/automation-execution.test.ts --testTimeout=30000",
+    "test:cli": "jest tests/integration/cli-execution.test.ts --testTimeout=15000",
+    "test:deployment": "jest tests/unit/deployment-scripts.test.ts",
+    "test:performance-regression": "jest tests/performance/regression.test.ts --testTimeout=60000",
     "test:tools": "jest --selectProjects tools",
     "test:e2e-new": "jest --selectProjects e2e",
     "test:ci": "jest --coverage --ci --watchAll=false --passWithNoTests",
@@ -52,7 +55,7 @@
     "customfield-cli": "node dist/cli/customfield-cli.js",
     "docs:generate": "node -e \"console.log('API documentation available at docs/API_REFERENCE.md')\"",
     "tools:list": "node -e \"const tools = require('./dist/index.js').TOOLS || []; console.log('Available tools:', tools.length); tools.forEach(t => console.log('- ' + t.name));\"",
-    "server:info": "node -e \"console.log('Enhanced MCP Jira REST Server v1.0.0'); console.log('Tools: 65+'); console.log('Features: Analytics, Automation, Custom Fields, Confluence');\""
+    "server:info": "node -e \"console.log('Enhanced MCP Jira REST Server v1.8.0'); console.log('Tools: 111'); console.log('Features: Analytics, Automation, Custom Fields, Confluence');\""
   },
   "bin": {
     "jira-workflow": "./dist/cli/workflow-cli.js",
