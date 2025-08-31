@@ -117,10 +117,42 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+    
+    - name: Configure kubectl
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 -d > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
+    
     - name: Deploy to staging
       run: |
         echo "Deploying ${{ needs.build.outputs.image }} to staging"
-        # Add actual deployment commands here
+        
+        # Update image in deployment manifest
+        sed -i "s|IMAGE_PLACEHOLDER|${{ needs.build.outputs.image }}|g" deployment/k8s/deployment.yaml
+        
+        # Apply Kubernetes manifests
+        kubectl apply -f deployment/k8s/namespace.yaml
+        kubectl apply -f deployment/k8s/configmap.yaml
+        kubectl apply -f deployment/k8s/secret.yaml
+        kubectl apply -f deployment/k8s/deployment.yaml
+        kubectl apply -f deployment/k8s/service.yaml
+        
+        # Wait for rollout
+        kubectl rollout status deployment/mcp-jira-server -n mcp-system --timeout=300s
+        
+        # Verify deployment
+        kubectl get pods -n mcp-system -l app=mcp-jira-server
+        
+        # Health check
+        STAGING_URL=$(kubectl get service mcp-jira-server -n mcp-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        if [ -n "$STAGING_URL" ]; then
+          curl -f http://$STAGING_URL:9090/health || exit 1
+        fi
 
   deploy-production:
     if: github.event_name == 'release'
@@ -131,7 +163,57 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+    
+    - name: Setup Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: 'v3.12.0'
+    
+    - name: Configure kubectl
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" | base64 -d > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
+    
     - name: Deploy to production
       run: |
         echo "Deploying ${{ needs.build.outputs.image }} to production"
-        # Add actual deployment commands here
+        
+        # Deploy with Helm for production
+        helm upgrade --install mcp-jira-server ./deployment/helm/mcp-jira-server \
+          --namespace mcp-system \
+          --create-namespace \
+          --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
+          --set image.tag=${{ github.event.release.tag_name }} \
+          --set environment=production \
+          --set replicaCount=3 \
+          --set resources.requests.memory=512Mi \
+          --set resources.requests.cpu=500m \
+          --set resources.limits.memory=1Gi \
+          --set resources.limits.cpu=1000m \
+          --wait --timeout=600s
+        
+        # Verify deployment
+        kubectl get pods -n mcp-system -l app.kubernetes.io/name=mcp-jira-server
+        
+        # Health check
+        PROD_URL=$(kubectl get service mcp-jira-server -n mcp-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        if [ -n "$PROD_URL" ]; then
+          curl -f http://$PROD_URL:9090/health || exit 1
+        fi
+        
+        # Run smoke tests
+        echo "Running production smoke tests..."
+        kubectl run smoke-test --rm -i --restart=Never --image=curlimages/curl -- \
+          curl -f http://mcp-jira-server.mcp-system.svc.cluster.local:9090/health
+    
+    - name: Notify deployment success
+      if: success()
+      run: |
+        echo "✅ Production deployment successful!"
+        echo "Version: ${{ github.event.release.tag_name }}"
+        echo "Image: ${{ needs.build.outputs.image }}"
