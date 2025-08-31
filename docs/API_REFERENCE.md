@@ -1,6 +1,6 @@
 # API Reference
 
-This document provides a comprehensive reference for all 65+ tools available in the Enhanced MCP Jira REST Server.
+This document provides a comprehensive reference for all 111 tools available in the Enhanced MCP Jira REST Server.
 
 ## HTTP Endpoints
 

@@ -52,7 +52,7 @@
     "customfield-cli": "node dist/cli/customfield-cli.js",
     "docs:generate": "node -e \"console.log('API documentation available at docs/API_REFERENCE.md')\"",
     "tools:list": "node -e \"const tools = require('./dist/index.js').TOOLS || []; console.log('Available tools:', tools.length); tools.forEach(t => console.log('- ' + t.name));\"",
-    "server:info": "node -e \"console.log('Enhanced MCP Jira REST Server v1.0.0'); console.log('Tools: 65+'); console.log('Features: Analytics, Automation, Custom Fields, Confluence');\""
+    "server:info": "node -e \"console.log('Enhanced MCP Jira REST Server v1.8.0'); console.log('Tools: 111'); console.log('Features: Analytics, Automation, Custom Fields, Confluence');\""
   },
   "bin": {
     "jira-workflow": "./dist/cli/workflow-cli.js",
